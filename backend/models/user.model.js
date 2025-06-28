@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
 	{
+		googleId: {
+			type: String,
+		},
 		email: {
 			type: String,
 			required: true,
@@ -14,6 +17,15 @@ const userSchema = new mongoose.Schema(
 		name: {
 			type: String,
 			required: true,
+		},
+		accessToken: {
+			type: String,
+		},
+		refreshToken: {
+			type: String,
+		},
+		tokenExpiry: {
+			type: Date,
 		},
 		lastLogin: {
 			type: Date,
