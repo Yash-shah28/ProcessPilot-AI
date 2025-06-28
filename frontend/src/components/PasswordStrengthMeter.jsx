@@ -16,9 +16,9 @@ const PasswordCriteria = ({ password }) => {
 					{item.met ? (
 						<Check className='size-4 text-green-500 mr-2' />
 					) : (
-						<X className='size-4 text-gray-500 mr-2' />
+						<X className='size-4 text-black-500 mr-2' />
 					)}
-					<span className={item.met ? "text-green-500" : "text-gray-400"}>{item.label}</span>
+					<span className={item.met ? "text-green-600" : "text-black-400"}>{item.label}</span>
 				</div>
 			))}
 		</div>
@@ -64,7 +64,7 @@ const PasswordStrengthMeter = ({ password }) => {
 					<div
 						key={index}
 						className={`h-1 w-1/4 rounded-full transition-colors duration-300 
-                ${index < strength ? getColor(strength) : "bg-gray-600"}
+                ${index < strength ? getColor(strength) : "bg-black-600"}
               `}
 					/>
 				))}
