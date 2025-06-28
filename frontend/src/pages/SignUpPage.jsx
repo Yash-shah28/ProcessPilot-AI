@@ -1,10 +1,10 @@
-import { motion } from "framer-motion";
 import Input from "../components/Input";
 import { Loader, Lock, Mail, User } from "lucide-react";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 import { UserContext } from "../Context/UserContext";
+import Googlelogo from "../assets/google-logo.png";
 
 const SignUpPage = () => {
 	const [name, setName] = useState("");
@@ -25,66 +25,69 @@ const SignUpPage = () => {
 		}
 	};
 	return (
-		<motion.div
-			initial={{ opacity: 0, y: 20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.5 }}
-			className='max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl 
-			overflow-hidden'
-		>
-			<div className='p-8'>
-				<h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text'>
-					Create Account
-				</h2>
+		<div className="bg-white min-h-screen">
+			<div className=" pt-25 flex items-center justify-center min-h-screen bg-gray-100">
+				<div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-4">
+					<h2 className="text-2xl font-semibold text-center mb-4">
+						Create Your Account
+					</h2>
 
-				<form onSubmit={handleSignUp}>
-					<Input
-						icon={User}
-						type='text'
-						placeholder='Full Name'
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-					/>
-					<Input
-						icon={Mail}
-						type='email'
-						placeholder='Email Address'
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
-					<Input
-						icon={Lock}
-						type='password'
-						placeholder='Password'
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-					{userAuth.error && <p className='text-red-500 font-semibold mt-2'>{userAuth.error}</p>}
-					<PasswordStrengthMeter password={password} />
+					<form onSubmit={handleSignUp}>
+						<Input
+							icon={User}
+							type='text'
+							placeholder='Full Name'
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+						/>
+						<Input
+							icon={Mail}
+							type='email'
+							placeholder='Email Address'
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+						/>
+						<Input
+							icon={Lock}
+							type='password'
+							placeholder='Password'
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+						{userAuth.error && <p className='text-red-500 font-semibold mt-2'>{userAuth.error}</p>}
+						<PasswordStrengthMeter password={password} />
 
-					<motion.button
-						className='mt-5 w-full py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white 
-						font-bold rounded-lg shadow-lg hover:from-green-600
-						hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-						 focus:ring-offset-gray-900 transition duration-200'
-						whileHover={{ scale: 1.02 }}
-						whileTap={{ scale: 0.98 }}
-						type='submit'
-						disabled={userAuth.isLoading}
-					>
-						{userAuth.isLoading ? <Loader className=' animate-spin mx-auto' size={24} /> : "Sign Up"}
-					</motion.button>
-				</form>
+						<button
+							className="w-full bg-black text-white py-1.5 rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity mt-3"
+							type='submit'
+							disabled={userAuth.isLoading}
+						>
+							{userAuth.isLoading ? <Loader className=' animate-spin mx-auto' size={24} /> : "Sign Up"}
+						</button>
+					</form>
+
+					<div className='text-center mt-4'>
+							<Link to={"/login"} className='text-center block text-[#111] text-lg hover:underline'>
+								Already have an account? Login
+							</Link>
+					</div>
+					<div className="flex items-center my-4">
+						<hr className="flex-grow border-t border-gray-300" />
+						<p className="mx-4 text-gray-600  text-sm">Or Signup with</p>
+						<hr className="flex-grow border-t border-gray-300" />
+					</div>
+					<div className="mt-4">
+						<button
+						onClick={() => alert("Google login functionality will go here")}
+						className="w-full flex items-center justify-center border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition"
+						>
+							<img src={Googlelogo} alt="Google Logo" className="h-5 mr-2" />
+							<span className="text-gray-700"> Google</span>
+						</button>
+					</div>
+				</div>
 			</div>
-			<div className='px-8 py-4 bg-gray-900 bg-opacity-50 flex justify-center'>
-				<p className='text-sm text-gray-400'>
-					Already have an account?{" "}
-					<Link to={"/login"} className='text-green-400 hover:underline'>
-						Login
-					</Link>
-				</p>
-			</div>
-		</motion.div>
+		</div>
 	);
 };
 export default SignUpPage;
