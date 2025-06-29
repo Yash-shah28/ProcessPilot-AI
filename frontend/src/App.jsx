@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Navbar from "./components/Navbar";
+import AboutUs from "./pages/AboutUs";
 
 import { Toaster } from "react-hot-toast";
 import { useContext, useEffect } from "react";
@@ -70,7 +71,14 @@ function App() {
 						</RedirectAuthenticatedUser>
 					}
 				/>
-
+				<Route
+					path='/aboutus'
+					element={
+						<ProtectedRoute>
+							<AboutUs />
+						</ProtectedRoute>
+					}
+				/>
 
 
 				{/* catch all routes */}

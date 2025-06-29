@@ -1,4 +1,5 @@
 import { Mail, MapPin, Phone } from "lucide-react";
+import{ Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -8,7 +9,7 @@ const Footer = () => {
         <div>
           <h2 className="text-2xl font-bold italic mb-2">ProcessPilot Ai</h2>
           <p className="text-sm mb-4 text-gray-300">
-            Experience the extraordinary beauty of untouched diamonds, each telling its own unique story.
+            Welcome to ProcessPilot AI, your intelligent partner in automating everyday business workflows. Born out of a vision to reduce repetitive tasks and let teams focus on what truly matters, ProcessPilot AI brings the power of automation and artificial intelligence into one seamless platform.
           </p>
           <div className="flex space-x-4 text-white text-xl">
             <i className="fab fa-facebook-f"></i>
@@ -21,11 +22,11 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
           <ul className="space-y-1 text-sm text-gray-300">
-            <li>About Us</li>
+            <Link to="/AboutUs">About Us</Link>
             {/* <li>Our Collection</li>
             <li>Diamond Education</li>
             <li>Custom Design</li> */}
-            <li>Contact Us</li>
+            <li><Link to="/ContactUs">Contact Us</Link></li>
           </ul>
         </div>
 
