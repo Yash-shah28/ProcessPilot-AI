@@ -108,8 +108,19 @@ export const UserContextProvider = ({ children }) => {
 		}
 	};
 
+	const googlelogin = async() => {
+		setUserAuth(prev => ({ ...prev, isLoading: true, error: null }));
+		try {
+			const response = await axios.get(`${API_URL}/google`);
+			setUserAuth(prev =>({...prev, message: response.data.mesage, isAuthenticated: true, isLoading: false}));
+		} catch (error) {
+			setUserAuth(prev =>({ ...prev, error: error.response?.data?.message || "Error logging in", isLoading: false }));
+		}
+	};
+
+
 	return (
-		<UserContext.Provider value={{ userAuth, setUserAuth, signup, login, logout, verifyEmail, forgotPassword, resetPassword, checkAuth }}>
+		<UserContext.Provider value={{ userAuth, setUserAuth, signup, login, logout, verifyEmail, forgotPassword, resetPassword, checkAuth, googlelogin}}>
 			{children}
 		</UserContext.Provider>
 	)

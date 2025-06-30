@@ -3,18 +3,30 @@ import { Mail, Lock, Loader } from "lucide-react";
 import { Link } from "react-router-dom";
 import Input from "../components/Input";
 import { UserContext } from "../Context/UserContext";
-import Googlelogo from "../assets/google-logo.png"; 
- 
+import Googlelogo from "../assets/google-logo.png";
+
 
 const LoginPage = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const { userAuth, login } = useContext(UserContext);
+	const { userAuth, login, googlelogin } = useContext(UserContext);
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
-		await login(email, password);
+		try {
+			await login(email, password);
+		} catch (error) {
+			console.log(error)
+		}
 	};
+
+	const handlegoogle = async () => {
+		try {
+			await googlelogin();
+		} catch (error) {
+			console.log(error)
+		}
+	}
 
 	return (
 		<div className="bg-white min-h-screen">
@@ -78,13 +90,14 @@ const LoginPage = () => {
 						<hr className="flex-grow border-t border-gray-300" />
 					</div>
 					<div className="mt-4">
-						<button
-						onClick={() => alert("Google login functionality will go here")}
-						className="w-full flex items-center justify-center border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition"
-						>
-							<img src={Googlelogo} alt="Google Logo" className="h-5 mr-2" />
-							<span className="text-gray-700"> Google</span>
-						</button>
+						<a href="http://localhost:5000/api/auth/google">
+							<button
+								className="w-full flex items-center justify-center border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition"
+							>
+								<img src={Googlelogo} alt="Google Logo" className="h-5 mr-2" />
+								<span className="text-gray-700"> Google</span>
+							</button>
+						</a>
 					</div>
 				</div>
 			</div>

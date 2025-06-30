@@ -1,21 +1,28 @@
 import { Link } from "react-router-dom";
 import { User } from "lucide-react";
-import{useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import { UserContext } from "../Context/UserContext";
 
 const Navbar = () => {
     const [showDropdown, setShowDropdown] = useState(false);
-	const dropdownRef = useRef(null);
+    const dropdownRef = useRef(null);
 
-	// Close dropdown on outside click
-	useEffect(() => {
-		const handleClickOutside = (event) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-				setShowDropdown(false);
-			}
-		};
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
-	}, []);
+    const { userAuth, logout } = useContext(UserContext)
+
+    const handleLogout = async () => {
+        await logout();
+    }
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
     return (
         <header className="bg-white shadow-md">
             <div className="w-full py-4 flex items-center justify-between px-4">
@@ -41,29 +48,56 @@ const Navbar = () => {
                 </div>
 
                 {/* Right Section: User Icon */}
-                <div className="flex-none reltive mr-12" ref={dropdownRef}>
+                <div className="flex-none reltive mr-10" ref={dropdownRef}>
                     <button onClick={() => setShowDropdown(!showDropdown)} className="hover:text-black" title="Acdcount">
-                         <User className="w-5 h-5 text-gray-600" />
+                        <User className="w-5 h-5 text-gray-600" />
                     </button>
+
                     {showDropdown && (
                         <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-50">
-                            <Link
-                                to="/login"
-                                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                                onClick={() => setShowDropdown(false)}
-                                >
-                                    Login
-                                </Link>
-                                <div className="border-t border-gray-200"></div>
-                                <Link
-                                to="/signup"
-                                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                                onClick={() => setShowDropdown(false)}
-                                >
-                                    Sign Up
-                                </Link>
+                            {userAuth.isAuthenticated && userAuth.user.name ?
+                                <>
+                                    <div className="block px-4 py-2 text-gray-700 border-b border-gray-200 text-sm">
+                                        Hello, {userAuth.user.name}
+                                    </div>
+                                    <Link
+                                        to="/profile"
+                                        className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                                        onClick={() => setShowDropdown(false)}
+                                    >
+                                        Profile
+                                    </Link>
+                                    <div className="border-t border-gray-200"></div>
+                                    <Link
+                                        className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                                        onClick={handleLogout}
+                                    >
+                                        Logout
+                                    </Link>
+                                </>
+                                :
+                                <>
+                                    <Link
+                                        to="/login"
+                                        className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                                        onClick={() => setShowDropdown(false)}
+                                    >
+                                        Login
+                                    </Link>
+                                    <div className="border-t border-gray-200"></div>
+                                    <Link
+                                        to="/signup"
+                                        className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                                        onClick={() => setShowDropdown(false)}
+                                    >
+                                        Sign Up
+                                    </Link>
+                                </>
+                            }
+
                         </div>
                     )}
+
                 </div>
             </div>
         </header>
