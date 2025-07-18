@@ -6,13 +6,16 @@
 	"scripts": {
 		"dev": "nodemon backend/index.js",
 		"start": "NODE_ENV=production node backend/index.js",
-		"build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+		"build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
+		"inngest": "inngest dev"
 	},
 	"keywords": [],
 	"author": "",
 	"type": "module",
 	"license": "ISC",
 	"dependencies": {
+		"@google/genai": "^1.10.0",
+		"@inngest/agent-kit": "^0.9.0",
 		"bcryptjs": "^2.4.3",
 		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",
@@ -21,13 +24,16 @@
 		"express": "^4.19.2",
 		"framer-motion": "^12.19.2",
 		"googleapis": "^150.0.1",
+		"inngest": "^3.40.1",
 		"jsonwebtoken": "^9.0.2",
 		"lottie-react": "^2.4.1",
 		"mongoose": "^8.5.2",
+		"nodemailer": "^7.0.5",
 		"passport": "^0.7.0",
 		"passport-google-oauth20": "^2.0.0"
 	},
 	"devDependencies": {
+		"inngest-cli": "^1.8.2",
 		"nodemon": "^3.1.4"
 	}
 }
