@@ -1,5 +1,6 @@
 import bcryptjs from "bcryptjs";
 import crypto from "crypto";
+import { inngest } from '../inngest/client.js'
 
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { User } from "../models/user.model.js";
@@ -7,7 +8,7 @@ import { User } from "../models/user.model.js";
 export const signup = async (req, res) => {
 	const { email, password, name } = req.body;
 	try {
-		if(!email || !password || !name){
+		if (!email || !password || !name) {
 			throw new Error("All Fields are required")
 		}
 
@@ -29,6 +30,13 @@ export const signup = async (req, res) => {
 
 		await user.save();
 
+		await inngest.send({
+			name: "user/signup",
+			data: {
+				email,
+			},
+		});
+
 		// jwt
 		generateTokenAndSetCookie(res, user._id);
 		res.status(201).json({
@@ -43,8 +51,6 @@ export const signup = async (req, res) => {
 		res.status(400).json({ success: false, message: error.message });
 	}
 };
-
-
 
 export const login = async (req, res) => {
 	const { email, password } = req.body;
@@ -81,8 +87,6 @@ export const logout = async (req, res) => {
 	res.clearCookie("token");
 	res.status(200).json({ success: true, message: "Logged out successfully" });
 };
-
-
 
 export const checkAuth = async (req, res) => {
 	try {
