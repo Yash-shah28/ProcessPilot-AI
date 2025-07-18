@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { User } from "lucide-react";
 import { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../Context/UserContext";
-
+import logo from "../assets/p logo1.jpg"
 const Navbar = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
@@ -28,13 +28,16 @@ const Navbar = () => {
             <div className="w-full py-4 flex items-center justify-between px-4">
 
                 {/* Left Section: App Name */}
-                <div className="flex-none">
+                <div className="flex items-center space-x-3">
                     <Link
                         to="/"
-                        className="text-2xl font-bold italic text-black hover:text-black-800 transition-colors duration-200"
+                        className="flex items-center space-x-3 group transition-all duration-300 ease-in-out"
+                    // className="text-2xl font-bold italic text-black hover:text-black-800 transition-colors duration-200"
                     >
-                        <img src="/logo.png" alt="" className="h-8 w-8 mr-2 inline" />
-                        <span className="text-2xl font-italic">ProcessPilot AI</span>
+                        <img src={logo} alt="" className="h-14 sm:h-16 md:h-20 w-auto object-contain bg-white rounded-lg shadow-md p-1 transform group-hover:scale-105 transition duration-300" />
+                        <span className="text-xl sm:text-2xl font-bold italic text-black group-hover:text-black-600 transition-colors duration-300">ProcessPilot
+                            <span className="text-xl sm:text-2xl not-italic font-bold">AI</span>
+                        </span>
 
                     </Link>
                 </div>
