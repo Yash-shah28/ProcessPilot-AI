@@ -6,38 +6,52 @@ import { convertToRRULE } from "../utils/convertToRRULE.js";
 
 export const sendEmail = async (req, res) => {
   const user = await User.findById(req.userId);
-
   if (!user || !user.accessToken) {
-    return res.status(401).json({ message: "User has not connected Google account." });
+    return res.status(401).json({ message: "Google not connected." });
   }
 
   const oauth2Client = new google.auth.OAuth2();
   oauth2Client.setCredentials({ access_token: user.accessToken });
-
   const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
-  const {to, subject, body}= req.body;
-  const message = [
-    `To: ${to}`,
-    `Subject: ${subject}`,
-    "",
-    `${body}`
-  ].join("\n");
+  const { to, subject, body } = req.body;
 
-  const encodedMessage = Buffer.from(message)
+  // ✅ Ensure `to` is an array of valid strings
+  console.log("Sending email to:", to);
+  const recipients = Array.isArray(to) ? to.join(", ") : to;
+  console.log("Formatted recipients:", recipients);
+  if (!recipients || recipients.includes("undefined")) {
+    return res.status(400).json({ message: "Invalid 'To' email address." });
+  }
+
+  // ✅ Build MIME message with proper headers
+  const mimeMessage = [
+    `To: ${recipients}`,
+    `Subject: ${subject}`,
+    "Content-Type: text/html; charset=UTF-8",
+    "",
+    body
+  ].join("\r\n");
+
+  const encodedMessage = Buffer.from(mimeMessage)
     .toString("base64")
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
     .replace(/=+$/, "");
 
-  await gmail.users.messages.send({
-    userId: "me",
-    requestBody: {
-      raw: encodedMessage
-    }
-  });
+  try {
+    await gmail.users.messages.send({
+      userId: "me",
+      requestBody: {
+        raw: encodedMessage
+      }
+    });
 
-  res.json({ success: true, message: "Email sent!" });
+    res.status(200).json({ success: true, message: "Email sent!" });
+  } catch (error) {
+    console.error("Gmail send error:", error?.response?.data || error);
+    res.status(500).json({ message: "Failed to send email." });
+  }
 };
 
 
@@ -46,6 +60,8 @@ export const createCalendarEvent = async (req, res) => {
   const userId = req.userId;
   const params = req.body;
 
+  console.log("Creating calendar event with params:", params);
+  console.log("User ID:", userId);
   try {
     const user = await User.findById(userId);
     if (!user || !user.accessToken) {

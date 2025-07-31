@@ -1,27 +1,26 @@
+import { inngest } from '../inngest/client.js';
 import {Workflow} from '../models/workflow.model.js';
 
 export const createWorkflow = async (req, res) => {
-    const { name, description, steps } = req.body;
+    const { description } = req.body;
     const userId = req.userId;
     try {
-        if (!name || !steps) {
-            return res.status(400).json({ success: false, message: "Name and steps are required" });
+        if (!description) {
+            return res.status(400).json({ success: false, message: "Prompt is required" });
         }
-
-        const preparedSteps = steps.map((step, index) => ({
-            name: step.name,
-            type: step.type,
-            parameters: step.parameters
-        }));
-
         const newWorkflow = new Workflow({
-            userId: userId,
-            name,
             description,
-            steps: preparedSteps
+            userId
         });
 
         const savedWorkflow = await newWorkflow.save();
+        const workflowId = savedWorkflow._id;
+        await inngest.send({
+              name: "workflow/create",
+              data: {
+                workflowId,
+              },
+            });
         return res.status(201).json({ success: true, data: savedWorkflow });
 
 

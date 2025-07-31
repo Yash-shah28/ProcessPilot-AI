@@ -13,6 +13,7 @@ import googleRoutes from "./routes/google.route.js";
 import workflowRoutes from "./routes/workflow.routes.js";
 import { inngest } from "./inngest/client.js";
 import { onUsersignup } from "./inngest/functions/on-signup.js";
+import { onWorkflowCreate } from "./inngest/functions/on-workflow-create.js";
 
 dotenv.config();
 
@@ -33,7 +34,7 @@ app.use(
   "/api/inngest",
   serve({
     client: inngest,
-    functions: [onUsersignup],
+    functions: [onUsersignup,onWorkflowCreate],
   })
 );
 

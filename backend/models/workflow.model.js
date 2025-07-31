@@ -24,24 +24,21 @@ const emailParamsSchema = new mongoose.Schema({
 const stepSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
     },
     type: {
         type: String,
-        required: true,
         enum: ['calendar_event', 'reminder', 'send_email']
     },
     parameters: {
         type: mongoose.Schema.Types.Mixed, // holds any of the above schemas dynamically
-        required: true,
     }
 })
 
 
 const workflowSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  name: { type: String, required: true },
-  description: { type: String },
+  name: { type: String },
+  description: { type: String, required: true },
   steps: [stepSchema],
   status: {
     type: String,
