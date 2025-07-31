@@ -4,16 +4,15 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { serve } from "inngest/express";
-
-
 import { connectDB } from "./db/connectDB.js";
-
 import authRoutes from "./routes/auth.route.js";
 import googleRoutes from "./routes/google.route.js";
 import workflowRoutes from "./routes/workflow.routes.js";
 import { inngest } from "./inngest/client.js";
 import { onUsersignup } from "./inngest/functions/on-signup.js";
 import { onWorkflowCreate } from "./inngest/functions/on-workflow-create.js";
+import promptRoutes from "./routes/prompt.route.js";
+
 
 dotenv.config();
 
@@ -38,8 +37,8 @@ app.use(
   })
 );
 
-
-
+app.use("/api/prompt", promptRoutes);
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "/frontend/dist")));

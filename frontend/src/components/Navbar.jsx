@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { User } from "lucide-react";
 import { useState, useEffect, useRef, useContext } from "react";
 import { UserContext } from "../Context/UserContext";
-import logo from "../assets/p logo1.jpg"
+import logo from "../assets/logo2.png"
 const Navbar = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
@@ -34,7 +34,7 @@ const Navbar = () => {
                         className="flex items-center space-x-3 group transition-all duration-300 ease-in-out"
                     // className="text-2xl font-bold italic text-black hover:text-black-800 transition-colors duration-200"
                     >
-                        <img src={logo} alt="" className="h-14 sm:h-16 md:h-20 w-auto object-contain bg-white rounded-lg shadow-md p-1 transform group-hover:scale-105 transition duration-300" />
+                        <img src={logo} alt="" className="h-14 sm:h-16 md:h-20 w-auto object-contain bg-black rounded-lg shadow-md p-1 transform group-hover:scale-105 transition duration-300" />
                         <span className="text-xl sm:text-2xl font-bold italic text-black group-hover:text-black-600 transition-colors duration-300">ProcessPilot
                             <span className="text-xl sm:text-2xl not-italic font-bold">AI</span>
                         </span>
@@ -45,15 +45,18 @@ const Navbar = () => {
                 {/* Center Section: Navigation Links */}
                 <div className="flex-1 flex justify-center">
                     <nav className="hidden md:flex space-x-6 font-medium text-gray-600">
-                        <Link to="/contactus" className="hover:text-black">Contact Us</Link>
+                        <Link to="/dashboard" className="hover:text-black">Dashboard</Link>
+                        <Link to="/templates" className="hover:text-black">Templates</Link>
+                        <Link to="/analytics" className="hover:text-black">Analytics</Link>
+                        <Link to="/settings" className="hover:text-black">Settings</Link>
                         <Link to="/aboutus" className="hover:text-black">About Us</Link>
                     </nav>
                 </div>
 
                 {/* Right Section: User Icon */}
                 <div className="flex-none reltive mr-10" ref={dropdownRef}>
-                    <button onClick={() => setShowDropdown(!showDropdown)} className="hover:text-black" title="Acdcount">
-                        <User className="w-5 h-5 text-gray-600" />
+                    <button onClick={() => setShowDropdown(!showDropdown)} className="hover:text-black" title="Acccount">
+                        <User className="w-5 h-5 text-gray-600 hover:text-blue-500" />
                     </button>
 
                     {showDropdown && (
@@ -65,14 +68,14 @@ const Navbar = () => {
                                     </div>
                                     <Link
                                         to="/profile"
-                                        className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                                        className="block px-4 py-2.5 text-gray-700 hover:bg-gray-200 transition-colors"
                                         onClick={() => setShowDropdown(false)}
                                     >
                                         Profile
                                     </Link>
                                     <div className="border-t border-gray-200"></div>
                                     <Link
-                                        className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
+                                        className="block px-4 py-2.5 text-gray-700 hover:bg-gray-200 transition-colors"
                                         onClick={handleLogout}
                                     >
                                         Logout

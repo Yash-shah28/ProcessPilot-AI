@@ -2,7 +2,9 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/DashboardPage";
+import DashboardPage from "./pages/Dashboard";
+import Inputs from "./pages/Inputs";
+import Guide from "./pages/Guide";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Navbar from "./components/Navbar";
 import AboutUs from "./pages/AboutUs";
@@ -74,10 +76,27 @@ function App() {
 				<Route
 					path='/aboutus'
 					element={
+						<ProtectedRoute>
 							<AboutUs />
+						</ProtectedRoute>
 					}
 				/>
-
+				<Route
+					path='/inputs'
+					element={
+						<ProtectedRoute>
+						<Inputs />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path='/guide'
+					element={
+						<ProtectedRoute>
+							<Guide />
+						</ProtectedRoute>
+					}
+				/>
 
 				{/* catch all routes */}
 				<Route path='*' element={<Navigate to='/' replace />} />
