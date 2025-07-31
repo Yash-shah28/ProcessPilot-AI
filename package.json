@@ -14,16 +14,13 @@
 	"type": "module",
 	"license": "ISC",
 	"dependencies": {
-<<<<<<< HEAD
 		"@google/genai": "^1.10.0",
 		"@inngest/agent-kit": "^0.9.0",
-=======
 		"@fortawesome/fontawesome-svg-core": "^6.7.2",
 		"@fortawesome/free-brands-svg-icons": "^6.7.2",
 		"@fortawesome/free-solid-svg-icons": "^6.7.2",
 		"@fortawesome/react-fontawesome": "^0.2.2",
 		"@google/generative-ai": "^0.24.1",
->>>>>>> rohang
 		"bcryptjs": "^2.4.3",
 		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",
@@ -36,11 +33,8 @@
 		"jsonwebtoken": "^9.0.2",
 		"lottie-react": "^2.4.1",
 		"mongoose": "^8.5.2",
-<<<<<<< HEAD
 		"nodemailer": "^7.0.5",
-=======
 		"openai": "^5.10.1",
->>>>>>> rohang
 		"passport": "^0.7.0",
 		"passport-google-oauth20": "^2.0.0"
 	},
