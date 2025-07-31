@@ -8,6 +8,7 @@ import { connectDB } from "./db/connectDB.js";
 
 import authRoutes from "./routes/auth.route.js";
 import googleRoutes from "./routes/google.route.js";
+import promptRoutes from "./routes/prompt.route.js";
 
 dotenv.config();
 
@@ -22,8 +23,8 @@ app.use(cookieParser()); // allows us to parse incoming cookies
 
 app.use("/api/auth", authRoutes);
 app.use("/api/google", googleRoutes);
-
-
+app.use("/api/prompt", promptRoutes);
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "/frontend/dist")));
