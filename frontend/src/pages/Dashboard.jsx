@@ -1,76 +1,55 @@
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useContext, useEffect, useState } from 'react';
 import Footer from '../components/Footer';
-import { User } from 'lucide-react';
 import { Search } from 'lucide-react';
-import { Link } from 'react-router-dom';
-const App: React.FC = () => {
+import { Link,useLocation } from 'react-router-dom';
+import { WorkflowContext } from '../Context/WorkflowContext';
+const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [viewMode, setViewMode] = useState('grid');
     const [sortBy, setSortBy] = useState('lastModified');
     const [statusFilter, setStatusFilter] = useState('all');
+    const { workflow, getWorkflow } = useContext(WorkflowContext)
+
+
+
+    const location = useLocation();
+
+
+    useEffect(() => {
+        if (location.pathname === '/') {
+            getWorkflow();
+        }
+    }, [location.pathname]);
+
+    // useEffect(() => {
+    //         const get = async () => {
+    //             try {
+    //                 await getWorkflow();
+    //             } catch (error) {
+    //                 console.error('Error loading Workflow', error);
+    //             }
+    //         };
+    //         get();
+    //     }, []);
+
+    const workflowData = workflow.workflow;
+
+    console.log("Workflow Data:", workflowData);
+
+
+
     // Mock data for workflows
-    const workflows = [
-        {
-            id: 1,
-            name: 'Customer Onboarding',
-            description: 'Process for new customer registration and setup',
-            status: 'active',
-            lastModified: '2025-06-25',
-            steps: 8,
-            owner: 'John Smith',
-            category: 'Customer Service'
-        },
-        {
-            id: 2,
-            name: 'Invoice Approval',
-            description: 'Financial approval process for invoices',
-            status: 'paused',
-            lastModified: '2025-06-20',
-            steps: 5,
-            owner: 'Sarah Johnson',
-            category: 'Finance'
-        },
-        {
-            id: 3,
-            name: 'Content Publishing',
-            description: 'Review and publish process for marketing content',
-            status: 'completed',
-            lastModified: '2025-06-15',
-            steps: 6,
-            owner: 'Michael Chen',
-            category: 'Marketing'
-        },
-        {
-            id: 4,
-            name: 'Employee Onboarding',
-            description: 'New employee setup and training workflow',
-            status: 'active',
-            lastModified: '2025-06-22',
-            steps: 12,
-            owner: 'Lisa Rodriguez',
-            category: 'HR'
-        },
-        {
-            id: 5,
-            name: 'Product Release',
-            description: 'Process for releasing new product versions',
-            status: 'active',
-            lastModified: '2025-06-26',
-            steps: 10,
-            owner: 'David Wilson',
-            category: 'Product'
-        },
-        {
-            id: 6,
-            name: 'Bug Resolution',
-            description: 'Process for tracking and fixing software bugs',
-            status: 'paused',
-            lastModified: '2025-06-18',
-            steps: 7,
-            owner: 'Emma Taylor',
-            category: 'Development'
-        },
-    ];
+    const workflows = workflowData?.map(wf => ({
+        id: wf._id,
+        name: wf.name, // You can improve this if you store names separately
+        description: wf.description,
+        status: wf.status || 'idle',
+        lastModified: new Date(wf.updatedAt).toISOString().split('T')[0],
+        steps: wf.steps?.length || 0,
+        owner: wf.userId.name, // You could replace this with actual name if available
+        category: 'Automation' // Static, unless you have this field in DB
+    })) || [];
     // Filter workflows based on search query and status filter
     const filteredWorkflows = workflows.filter(workflow => {
         const matchesSearch = workflow.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -90,33 +69,33 @@ const App: React.FC = () => {
         return 0;
     });
     // Status badge component
-    const StatusBadge = ({ status }: { status: string }) => {
-        let bgColor = '';
-        let textColor = 'text-white';
-        let statusText = '';
-        switch (status) {
-            case 'active':
-                bgColor = 'bg-green-500';
-                statusText = 'Active';
-                break;
-            case 'paused':
-                bgColor = 'bg-yellow-500';
-                statusText = 'Paused';
-                break;
-            case 'completed':
-                bgColor = 'bg-blue-500';
-                statusText = 'Completed';
-                break;
-            default:
-                bgColor = 'bg-gray-500';
-                statusText = 'Unknown';
-        }
-        return (
-            <span className={`${bgColor} ${textColor} text-xs font-medium px-2.5 py-0.5 rounded-full`}>
-                {statusText}
-            </span>
-        );
-    };
+    // const StatusBadge = ({ status }) => {
+    //     let bgColor = '';
+    //     let textColor = 'text-white';
+    //     let statusText = '';
+    //     switch (status) {
+    //         case 'active':
+    //             bgColor = 'bg-green-500';
+    //             statusText = 'Active';
+    //             break;
+    //         case 'paused':
+    //             bgColor = 'bg-yellow-500';
+    //             statusText = 'Paused';
+    //             break;
+    //         case 'completed':
+    //             bgColor = 'bg-blue-500';
+    //             statusText = 'Completed';
+    //             break;
+    //         default:
+    //             bgColor = 'bg-gray-500';
+    //             statusText = 'Unknown';
+    //     }
+    //     return (
+    //         <span className={`${bgColor} ${textColor} text-xs font-medium px-2.5 py-0.5 rounded-full`}>
+    //             {statusText}
+    //         </span>
+    //     );
+    // };
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Page Content */}
@@ -145,7 +124,7 @@ const App: React.FC = () => {
                     <div className="px-4 py-5 sm:p-6">
                         <div className="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-6">
                             <div className="sm:col-span-3">
-                                <div className="mt-1 relative rounded-md "> 
+                                <div className="mt-1 relative rounded-md ">
                                     <input
                                         type="text"
                                         className="py-1 block w-full pl-10 sm:text-base border-b border-gray-200 rounded-full text-base"
@@ -221,7 +200,7 @@ const App: React.FC = () => {
                                 <div className="px-4 py-5 sm:p-6">
                                     <div className="flex items-center justify-between mb-4">
                                         <h3 className="text-lg font-medium text-gray-900 truncate">{workflow.name}</h3>
-                                        <StatusBadge status={workflow.status} />
+                                        {/* <StatusBadge status={workflow.status} /> */}
                                     </div>
                                     <p className="text-sm text-gray-500 mb-4 line-clamp-2">{workflow.description}</p>
                                     <div className="grid grid-cols-2 gap-4 text-sm">
@@ -285,7 +264,7 @@ const App: React.FC = () => {
                                                     <div className="text-sm text-gray-500">Last Modified</div>
                                                     <div className="text-sm font-medium">{workflow.lastModified}</div>
                                                 </div>
-                                                <StatusBadge status={workflow.status} />
+                                                {/* <StatusBadge status={workflow.status} /> */}
                                                 <div className="flex space-x-2">
                                                     <button className="text-gray-400 hover:text-indigo-600 cursor-pointer whitespace-nowrap !rounded-button">
                                                         <i className="fas fa-eye"></i>
@@ -351,4 +330,4 @@ const App: React.FC = () => {
         </div>
     );
 }
-export default App;
+export default Dashboard;

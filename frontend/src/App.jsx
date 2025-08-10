@@ -2,7 +2,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard";
 import Inputs from "./pages/Inputs";
 import Guide from "./pages/Guide";
 import LoadingSpinner from "./components/LoadingSpinner";
@@ -53,7 +53,7 @@ function App() {
 					path='/'
 					element={
 						<ProtectedRoute>
-							<DashboardPage />
+							<Dashboard />
 						</ProtectedRoute>
 					}
 				/>

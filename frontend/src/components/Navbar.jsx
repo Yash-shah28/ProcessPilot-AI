@@ -46,9 +46,8 @@ const Navbar = () => {
                 <div className="flex-1 flex justify-center">
                     <nav className="hidden md:flex space-x-6 font-medium text-gray-600">
                         <Link to="/dashboard" className="hover:text-black">Dashboard</Link>
-                        <Link to="/templates" className="hover:text-black">Templates</Link>
                         <Link to="/analytics" className="hover:text-black">Analytics</Link>
-                        <Link to="/settings" className="hover:text-black">Settings</Link>
+                        {/* <Link to="/settings" className="hover:text-black">Settings</Link> */}
                         <Link to="/aboutus" className="hover:text-black">About Us</Link>
                     </nav>
                 </div>
