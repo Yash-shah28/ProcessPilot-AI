@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
+import  { useContext, useState } from 'react';
 import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
+import { WorkflowContext } from '../Context/WorkflowContext';
 
-const Inputs: React.FC = () => {
+
+const Inputs = () => {
     const [description, setDescription] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const {workflow, createWorkflow} = useContext(WorkflowContext);
+
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        // You can replace this with an API call
+        try{
+            await createWorkflow(description);
+            setDescription(""); 
+            
+        }
+        catch(error) {
+            console.error("Error creating workflow:", error);
+        }
         console.log("Submitted Description:", description);
     };
 
@@ -56,7 +67,13 @@ const Inputs: React.FC = () => {
                             type="submit"
                             className="px-6 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
                         >
-                            Submit
+                             {workflow.isLoading ? (
+                                              <>
+                                                Creating Workflow...
+                                                </>
+                                            ) : (
+                                                'Create Workflow'
+                                            )}
                         </button>
                     </div>
 
