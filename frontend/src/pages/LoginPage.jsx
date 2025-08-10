@@ -91,14 +91,14 @@ const LoginPage = () => {
 						<hr className="flex-grow border-t border-gray-300" />
 					</div>
 					<div className="mt-4">
-						<button
-							type="button"
-							onClick={handlegoogle}
-							className="w-full flex items-center justify-center border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition"
-						>
-							<img src={Googlelogo} alt="Google Logo" className="h-5 mr-2" />
-							<span className="text-gray-700"> Google</span>
-						</button>
+						<a href="http://localhost:5000/api/auth/google">
+							<button
+								className="w-full flex items-center justify-center border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 transition"
+							>
+								<img src={Googlelogo} alt="Google Logo" className="h-5 mr-2" />
+								<span className="text-gray-700"> Google</span>
+							</button>
+						</a>
 					</div>
 				</div>
 			</div>
