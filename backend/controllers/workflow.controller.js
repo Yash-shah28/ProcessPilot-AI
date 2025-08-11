@@ -21,7 +21,7 @@ export const createWorkflow = async (req, res) => {
                 workflowId,
               },
             });
-        return res.status(201).json({ success: true, data: savedWorkflow });
+        return res.status(201).json({ success: true, data: savedWorkflow, message: "Workflow created successfully" });
 
 
     } catch (error) {
@@ -33,8 +33,8 @@ export const createWorkflow = async (req, res) => {
 
 export const getWorkflows = async (req, res) => {
   try {
-    const workflows = await Workflow.find({ userId: req.userId }).sort({ createdAt: -1 });
-    res.status(200).json({ workflows });
+    const workflows = await Workflow.find({ userId: req.userId }).sort({ createdAt: -1 }).populate('userId', 'name');
+    res.status(200).json({ sucess: true, data: workflows });
   } catch (error) {
     console.error("Error fetching workflows:", error);
     res.status(500).json({ message: "Server error" });
