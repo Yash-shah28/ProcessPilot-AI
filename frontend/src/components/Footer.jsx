@@ -16,36 +16,26 @@ const Footer = () => {
           <div className="flex space-x-4 text-white text-xl">
             <FontAwesomeIcon icon={faFacebookF} className="hover:text-blue-400 cursor-pointer" />
             <FontAwesomeIcon icon={faInstagram} className="hover:text-red-400 cursor-pointer" />
-            <FontAwesomeIcon icon={faTwitter}   className="hover:text-blue-400 cursor-pointer" />
+            <FontAwesomeIcon icon={faTwitter} className="hover:text-blue-400 cursor-pointer" />
           </div>
-          {/* <div className="flex space-x-4 text-white text-xl">
-            <i className="fab fa-facebook-f"></i>
-            <i className="fab fa-instagram"></i>
-            <i className="fab fa-twitter"></i>
-          </div> */}
         </div>
 
         {/* Quick Links */}
         <div className="space-y-4 ml-32">
           <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
           <ul className="space-y-1 text-sm text-gray-300">
-            <Link to="/AboutUs" className="hover:text-white">About Us</Link>
-            {/* <li>Our Collection</li>
-            <li>Diamond Education</li>
-            <li>Custom Design</li> */}
-            <li  className="hover:text-white"><Link to="/Dashboard">Dashboard</Link></li>
+            <li className="hover:text-white"><Link to="/Dashboard">Dashboard</Link></li>
+            <li className="hover:text-white"><Link to="/Analytics">Analytics</Link></li>
+            <li className="hover:text-white"><Link to="/AboutUs" >About Us</Link></li>
           </ul>
         </div>
 
         {/* Customer Service */}
         <div>
           <h3 className="text-lg font-semibold mb-2">Customer Service</h3>
-          <ul className="space-y-1 text-sm text-gray-300 hover:text-white">
-            {/* <li>Shipping Policy</li>
-            <li>Returns & Exchanges</li>
-            <li>Size Guide</li>
-            <li>Care Instructions</li> */}
-            <Link to="/guide">User Guide </Link>
+          <ul className="space-y-1 text-sm text-gray-300">
+            <li className="hover:text-white"><Link to="/UserProfile">User Profile</Link></li>
+            <li className="hover:text-white"><Link to="/guide">User Guide </Link></li>
           </ul>
         </div>
 

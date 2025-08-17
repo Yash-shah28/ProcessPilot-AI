@@ -66,7 +66,7 @@ const Navbar = () => {
                                         Hello, {userAuth.user.name}
                                     </div>
                                     <Link
-                                        to="/profile"
+                                        to="/userprofile"
                                         className="block px-4 py-2.5 text-gray-700 hover:bg-gray-200 transition-colors"
                                         onClick={() => setShowDropdown(false)}
                                     >

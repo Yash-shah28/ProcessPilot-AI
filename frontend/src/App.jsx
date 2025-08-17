@@ -8,6 +8,8 @@ import Guide from "./pages/Guide";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Navbar from "./components/Navbar";
 import AboutUs from "./pages/AboutUs";
+import UserProfile from "./pages/UserProfile";
+import Anyalytics from "./pages/Anyalytics";
 
 import { Toaster } from "react-hot-toast";
 import { useContext, useEffect } from "react";
@@ -94,6 +96,22 @@ function App() {
 					element={
 						<ProtectedRoute>
 							<Guide />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path='/userprofile'
+					element={
+						<ProtectedRoute>
+							<UserProfile />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path='/analytics'
+					element={
+						<ProtectedRoute>
+							<Anyalytics />
 						</ProtectedRoute>
 					}
 				/>
