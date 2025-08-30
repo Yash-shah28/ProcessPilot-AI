@@ -1,5 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Navigate, Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { useContext, useEffect } from "react";
+import { UserContext } from "./Context/UserContext";
+
+
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
@@ -11,9 +16,14 @@ import AboutUs from "./pages/AboutUs";
 import UserProfile from "./pages/UserProfile";
 import Anyalytics from "./pages/Anyalytics";
 
-import { Toaster } from "react-hot-toast";
-import { useContext, useEffect } from "react";
-import { UserContext } from "./Context/UserContext";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/Dashboard";
+import Users from "./pages/admin/Users";
+import Workflows from "./pages/admin/Workflows";
+import GoogleGroups from "./pages/admin/GoogleGroups";
+
+
+
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -87,7 +97,7 @@ function App() {
 					path='/inputs'
 					element={
 						<ProtectedRoute>
-						<Inputs />
+							<Inputs />
 						</ProtectedRoute>
 					}
 				/>
@@ -115,6 +125,12 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+				<Route path="/admin" element={<AdminLayout />}>
+					<Route path="dashboard" element={<AdminDashboard />} />
+					<Route path="users" element={<Users />} />
+					<Route path="workflows" element={<Workflows />} />
+					<Route path="GoogleGroup" element={<GoogleGroups />} />
+				</Route>
 
 				{/* catch all routes */}
 				<Route path='*' element={<Navigate to='/' replace />} />
