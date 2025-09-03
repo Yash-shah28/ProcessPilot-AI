@@ -282,6 +282,8 @@ export default function Profile() {
 
   const groupCommunicationIntegration = integrations.find((int) => int.type === "group-communication")
 
+  const currentUserEmail = "dev1@company.com" // Replace with actual user email from auth context
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
@@ -505,13 +507,13 @@ export default function Profile() {
                         <div className="flex-1">
                           <h4 className="font-medium">{integration.name}</h4>
                           <p className="text-sm text-gray-500">Last sync: {integration.lastSync}</p>
-                          {integration.type === "group-communication" && integration.connected && (
+                          {/* {integration.type === "group-communication" && integration.connected && (
                             <div className="mt-2">
                               <p className="text-sm text-blue-600">
                                 {integration.groups?.length || 0} groups configured
                               </p>
                             </div>
-                          )}
+                          )} */}
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
@@ -619,11 +621,12 @@ export default function Profile() {
                             <div className="text-center py-8 text-gray-500">
                               <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
                               <p className="font-medium">No groups created yet</p>
-                              <p className="text-sm">Click "Add Group" to create your first group</p>
+                              {/* <p className="text-sm">Click "Add Group" to create your first group</p> */}
                             </div>
                           ) : (
                             <div className="space-y-4">
-                              {groupCommunicationIntegration?.groups?.map((group) => (
+                              {groupCommunicationIntegration?.groups?.filter(group => group.emails.includes(currentUserEmail))
+                              .map((group) => (
                                 <div key={group.id} className="p-4 border rounded-lg bg-gray-50">
                                   <div className="flex items-start justify-between">
                                     <div className="flex-1">
