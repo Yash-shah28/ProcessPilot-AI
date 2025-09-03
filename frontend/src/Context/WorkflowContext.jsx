@@ -15,6 +15,8 @@ export const WorkflowContextProvider = ({ children }) => {
         error: null,
         isLoading: false,
         message: null,
+        userprofile: null,
+        activity: null
     })
 
     const createWorkflow = async (description) => {
@@ -40,11 +42,36 @@ export const WorkflowContextProvider = ({ children }) => {
         }
     }
 
+    const getUserProfile = async () => {
+        setworkflow(prev => ({ ...prev, isLoading: true, error: null }));
+        try {
+            const response = await axios.get(`${API_URL}/profile`);
+
+            console.log(response.data);
+            setworkflow(prev => ({ ...prev, userprofile: response.data.data, isLoading: false }));
+        } catch (error) {
+            setworkflow(prev => ({ ...prev, error: error.response?.data?.message || "Error", isLoading: false }));
+            throw error;
+        }
+    }
+    const getUserActivity = async () => {
+        setworkflow(prev => ({ ...prev, isLoading: true, error: null }));
+        try {
+            const response = await axios.get(`${API_URL}/activity`);
+
+            console.log(response.data);
+            setworkflow(prev => ({ ...prev, activity: response.data, isLoading: false }));
+        } catch (error) {
+            setworkflow(prev => ({ ...prev, error: error.response?.data?.message || "Error", isLoading: false }));
+            throw error;
+        }
+    }
 
 
-   
+
+
     return (
-        <WorkflowContext.Provider value={{ workflow, setworkflow, createWorkflow, getWorkflow}}>
+        <WorkflowContext.Provider value={{ workflow, setworkflow, createWorkflow, getWorkflow, getUserProfile, getUserActivity }}>
             {children}
         </WorkflowContext.Provider>
     )

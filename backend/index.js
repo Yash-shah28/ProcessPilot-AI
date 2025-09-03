@@ -12,6 +12,7 @@ import { inngest } from "./inngest/client.js";
 import { onUsersignup } from "./inngest/functions/on-signup.js";
 import { onWorkflowCreate } from "./inngest/functions/on-workflow-create.js";
 import promptRoutes from "./routes/prompt.route.js";
+import groupRoutes from "./routes/group.routes.js";
 
 
 dotenv.config();
@@ -28,6 +29,8 @@ app.use(cookieParser()); // allows us to parse incoming cookies
 app.use("/api/auth", authRoutes);
 app.use("/api/google", googleRoutes);
 app.use("/api/workflow", workflowRoutes);
+app.use("/api/groups", groupRoutes);
+
 
 app.use(
   "/api/inngest",
