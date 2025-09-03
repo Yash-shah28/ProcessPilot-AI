@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import { evaluatePrompt } from "../utils/GeminiaiApi"; // ⬅️ Imported API wrapper
 
@@ -30,8 +31,9 @@ const Guide = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar />
       <div className="text-gray-800">
-        <h1 className="text-4xl font-bold text-center mb-6">How to Write a Great Prompt</h1>
+        <h1 className="text-4xl font-bold text-center mb-6 mt-5">How to Write a Great Prompt</h1>
         <p className="text-lg text-center mb-10">
           Follow this guide to write effective prompts that help us solve your problems accurately.
         </p>

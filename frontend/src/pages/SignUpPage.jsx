@@ -1,4 +1,5 @@
 import Input from "../components/Input";
+import Navbar from "../components/Navbar";
 import { Loader, Lock, Mail, User } from "lucide-react";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -26,6 +27,7 @@ const SignUpPage = () => {
 	};
 	return (
 		<div className="bg-white min-h-screen">
+			<Navbar />
 			<div className=" pt-25 flex items-center justify-center min-h-screen bg-gray-100">
 				<div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-4">
 					<h2 className="text-2xl font-semibold text-center mb-4">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Footer from "@/components/Footer"
+import Navbar from "@/components/Navbar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -132,8 +133,15 @@ export default function Profile() {
               {
                 id: "grp_2",
                 name: "Design Team",
-                emails: ["designer1@company.com", "designer2@company.com"],
+                emails: ["designer1@company.com", "designer2@company.com","dev1@company.com"],
                 createdAt: "2024-01-12",
+              },
+              {
+                id: "grp_3",
+                name: "Hr Team",
+                emails: ["hr1@company.com", "hr2@company.com","hr3@company.com"],
+                createdAt: "2024-02-16",
+
               },
             ],
           },
@@ -297,11 +305,12 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar />
       <div className="max-w-6xl mx-auto space-y-6 pb-12">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mt-6">My Profile</h1>
             <p className="text-gray-600">Manage your account information and integrations</p>
           </div>
         </div>
@@ -534,8 +543,8 @@ export default function Profile() {
                               size="sm"
                               onClick={() => setShowGroupManagement(!showGroupManagement)}
                             >
-                              <Settings className="h-4 w-4 mr-2" />
-                              Manage Groups
+                              {/* <Settings className="h-4 w-4 mr-2" /> */}
+                              Show Groups
                             </Button>
                           )}
                       </div>
@@ -548,16 +557,16 @@ export default function Profile() {
                           <div className="flex items-center justify-between">
                             <CardTitle className="text-lg flex items-center gap-2">
                               <Users className="h-5 w-5" />
-                              Group Management
+                              Groups
                             </CardTitle>
                             <Dialog open={isGroupDialogOpen} onOpenChange={setIsGroupDialogOpen}>
-                              <DialogTrigger asChild>
+                              {/* <DialogTrigger asChild>
                                 <Button size="sm" className="bg-blue-600 text-white hover:bg-blue-700">
                                   <Plus className="h-4 w-4 mr-2" />
                                   Add Group
                                 </Button>
-                              </DialogTrigger>
-                              <DialogContent className="sm:max-w-md">
+                              </DialogTrigger> */}
+                              {/* <DialogContent className="sm:max-w-md">
                                 <DialogHeader>
                                   <DialogTitle>Add New Group</DialogTitle>
                                   <DialogDescription>Create a new group for email communications</DialogDescription>
@@ -598,12 +607,12 @@ export default function Profile() {
                                     </Button>
                                   </div>
                                 </div>
-                              </DialogContent>
+                              </DialogContent> */}
                             </Dialog>
                           </div>
-                          <CardDescription>
+                          {/* <CardDescription>
                             Manage your email groups and member lists for team communications
-                          </CardDescription>
+                          </CardDescription> */}
                         </CardHeader>
                         <CardContent>
                           {groupCommunicationIntegration?.groups?.length === 0 ? (
@@ -638,14 +647,14 @@ export default function Profile() {
                                         Created: {new Date(group.createdAt).toLocaleDateString()}
                                       </p>
                                     </div>
-                                    <Button
+                                    {/* <Button
                                       variant="outline"
                                       size="sm"
                                       onClick={() => handleDeleteGroup(group.id)}
                                       className="text-red-600 hover:text-red-700 hover:border-red-300"
                                     >
                                       <Trash2 className="h-4 w-4" />
-                                    </Button>
+                                    </Button> */}
                                   </div>
                                 </div>
                               ))}

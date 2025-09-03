@@ -1,5 +1,6 @@
 import  { useContext, useState } from 'react';
 import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
 import { Link } from 'react-router-dom';
 import { WorkflowContext } from '../Context/WorkflowContext';
 
@@ -24,6 +25,7 @@ const Inputs = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            <Navbar />
             {/* Page Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Page Header */}

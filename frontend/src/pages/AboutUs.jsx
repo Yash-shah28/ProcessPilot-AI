@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 import Lottie from "lottie-react";
 import aiBrain from "../assets/ai-brain.json";
 import automationGears from "../assets/automation-gears.json";
@@ -40,6 +41,7 @@ const sections = [
 const AboutUs = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-black">
+      <Navbar />
       <main className="flex-grow w-full max-w-6xl mx-auto px-6 py-16 space-y-24">
         <h1 className="text-5xl font-bold text-center text-gray-900 mb-12">
           About ProcessPilot AI

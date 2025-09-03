@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -236,11 +237,12 @@ export default function Analytics() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar />
       <div className="max-w-6xl mx-auto space-y-6 pb-12">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mt-5">Analytics Dashboard</h1>
             <p className="text-gray-600">Monitor your workflow performance and activity</p>
           </div>
         </div>

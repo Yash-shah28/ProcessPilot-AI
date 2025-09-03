@@ -3,6 +3,7 @@ import { useState, useContext } from "react";
 import { Mail, Lock, Loader } from "lucide-react";
 import { Link } from "react-router-dom";
 import Input from "../components/Input";
+import Navbar from "../components/Navbar";
 import { UserContext } from "../Context/UserContext";
 import Googlelogo from "../assets/google-logo.png";
 
@@ -31,6 +32,7 @@ const LoginPage = () => {
 
 	return (
 		<div className="bg-white min-h-screen">
+			<Navbar />
 			<div className=" pt-25 flex items-center justify-center min-h-screen bg-gray-100">
 				<div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-4">
 					<h2 className="text-2xl font-semibold text-center mb-4">

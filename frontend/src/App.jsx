@@ -11,7 +11,6 @@ import Dashboard from "./pages/Dashboard";
 import Inputs from "./pages/Inputs";
 import Guide from "./pages/Guide";
 import LoadingSpinner from "./components/LoadingSpinner";
-import Navbar from "./components/Navbar";
 import AboutUs from "./pages/AboutUs";
 import UserProfile from "./pages/UserProfile";
 import Anyalytics from "./pages/Anyalytics";
@@ -21,6 +20,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import Users from "./pages/admin/Users";
 import Workflows from "./pages/admin/Workflows";
 import GoogleGroups from "./pages/admin/GoogleGroups";
+import AdminProfile from "./pages/admin/AdminProfile";
 
 
 
@@ -59,7 +59,6 @@ function App() {
 
 	return (
 		<div>
-			<Navbar />
 			<Routes>
 				<Route
 					path='/'
@@ -130,6 +129,7 @@ function App() {
 					<Route path="users" element={<Users />} />
 					<Route path="workflows" element={<Workflows />} />
 					<Route path="GoogleGroup" element={<GoogleGroups />} />
+					<Route path="AdminProfile" element={<AdminProfile />}/>
 				</Route>
 
 				{/* catch all routes */}
