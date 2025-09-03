@@ -133,13 +133,13 @@ export default function Profile() {
               {
                 id: "grp_2",
                 name: "Design Team",
-                emails: ["designer1@company.com", "designer2@company.com","dev1@company.com"],
+                emails: ["designer1@company.com", "designer2@company.com", "dev1@company.com"],
                 createdAt: "2024-01-12",
               },
               {
                 id: "grp_3",
                 name: "Hr Team",
-                emails: ["hr1@company.com", "hr2@company.com","hr3@company.com"],
+                emails: ["hr1@company.com", "hr2@company.com", "hr3@company.com"],
                 createdAt: "2024-02-16",
 
               },
@@ -283,6 +283,9 @@ export default function Profile() {
   const groupCommunicationIntegration = integrations.find((int) => int.type === "group-communication")
 
   const currentUserEmail = "dev1@company.com" // Replace with actual user email from auth context
+  const userGroups = groupCommunicationIntegration?.groups?.filter(
+    (group) => group.emails.includes(currentUserEmail)
+  ) || [];
 
   if (loading) {
     return (
@@ -617,40 +620,49 @@ export default function Profile() {
                           </CardDescription> */}
                         </CardHeader>
                         <CardContent>
-                          {groupCommunicationIntegration?.groups?.length === 0 ? (
+                          {userGroups.length === 0 ? (
                             <div className="text-center py-8 text-gray-500">
                               <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                              <p className="font-medium">No groups created yet</p>
+                              <p className="font-medium">No groups found for your account</p>
+                              <p className="text-sm">You are not a member of any group yet</p>
                               {/* <p className="text-sm">Click "Add Group" to create your first group</p> */}
                             </div>
                           ) : (
                             <div className="space-y-4">
-                              {groupCommunicationIntegration?.groups?.filter(group => group.emails.includes(currentUserEmail))
-                              .map((group) => (
-                                <div key={group.id} className="p-4 border rounded-lg bg-gray-50">
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                      <div className="flex items-center gap-2 mb-3">
-                                        <Users className="h-4 w-4 text-blue-600" />
-                                        <h5 className="font-medium text-lg">{group.name}</h5>
-                                        <Badge variant="secondary">{group.emails.length} members</Badge>
-                                      </div>
-                                      <div className="space-y-2">
-                                        <p className="text-sm font-medium text-gray-700">Group Members:</p>
-                                        <div className="flex flex-wrap gap-2">
-                                          {group.emails.map((email, index) => (
-                                            <Badge key={index} variant="outline" className="text-xs">
-                                              <Mail className="h-3 w-3 mr-1" />
-                                              {email}
-                                            </Badge>
-                                          ))}
+                              {userGroups.map((group) => (
+                                  <div key={group.id} className="p-4 border rounded-lg bg-gray-50">
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-3">
+                                          <Users className="h-4 w-4 text-blue-600" />
+                                          <h5 className="font-medium text-lg">{group.name}</h5>
+                                          <Badge variant="secondary">{group.emails.length} members</Badge>
                                         </div>
+                                        <div className="space-y-2">
+                                          <p className="text-sm font-medium text-gray-700">Group Members:</p>
+                                          <div className="flex flex-wrap gap-2">
+                                            {group.emails.map((email, index) => (
+                                              <Badge key={index} variant={email === currentUserEmail ? "default" : "outline"}
+                                                className={`text-xs ${email === currentUserEmail
+                                                    ? "bg-blue-600 text-white border-blue-600"
+                                                    : ""
+                                                  }`}
+                                              >
+                                                <Mail className="h-3 w-3 mr-1" />
+                                                {email === currentUserEmail ? (
+                                                  <span className="font-semibold">You ({email})</span>
+                                                ) : (
+                                                  email
+                                                )}
+                                              </Badge>
+                                            ))}
+                                          </div>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-3">
+                                          Created: {new Date(group.createdAt).toLocaleDateString()}
+                                        </p>
                                       </div>
-                                      <p className="text-xs text-gray-500 mt-3">
-                                        Created: {new Date(group.createdAt).toLocaleDateString()}
-                                      </p>
-                                    </div>
-                                    {/* <Button
+                                      {/* <Button
                                       variant="outline"
                                       size="sm"
                                       onClick={() => handleDeleteGroup(group.id)}
@@ -658,9 +670,9 @@ export default function Profile() {
                                     >
                                       <Trash2 className="h-4 w-4" />
                                     </Button> */}
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
                             </div>
                           )}
                         </CardContent>
