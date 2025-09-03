@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { EyeIcon, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { WorkflowContext } from "@/Context/WorkflowContext";
 
 const Workflows = () => {
-  const [workflows, setWorkflows] = useState([]);
+
+  const { workflow, getWorkflow } = useContext(WorkflowContext)
+
 
   useEffect(() => {
-    // Replace with backend API call: /admin/workflows
-    setWorkflows([
-      { id: 1, name: "Weekly Sales Meeting", owner: "Yash", status: "active", steps: 3 },
-      { id: 2, name: "Product Demo Workflow", owner: "Kordia", status: "idle", steps: 2 },
-    ]);
+   getWorkflow()
   }, []);
 
+  console.log(workflow.workflow)
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Workflows</h1>
@@ -27,24 +27,23 @@ const Workflows = () => {
           </tr>
         </thead>
         <tbody>
-          {workflows.map((w) => (
+          {workflow?.workflow?.map((w) => (
             <tr key={w.id} className="border-t">
               <td className="p-3">{w.name}</td>
-              <td className="p-3">{w.owner}</td>
+              <td className="p-3">{w.userId.name}</td>
               <td className="p-3">
-                 <span
-                  className={`px-2 py-1 rounded text-sm ${
-                    w.status === "active"
+                <span
+                  className={`px-2 py-1 rounded text-sm ${w.status === "active"
                       ? "bg-green-100 text-green-600"
-                      :w.status === "idle"
-                      ? "bg-yellow-100 text-yellow-600"
-                      : "bg-red-100 text-red-600"
-                  }`}
+                      : w.status === "idle"
+                        ? "bg-yellow-100 text-yellow-600"
+                        : "bg-red-100 text-red-600"
+                    }`}
                 >
                   {w.status}
                 </span>
-                </td>
-              <td className="p-3">{w.steps}</td>
+              </td>
+              <td className="p-3">{w.steps.length}</td>
               <td className="p-3 space-x-2">
                 <Button variant="outline" size="sm" className="hover:bg-blue-100">
                   <EyeIcon className="h-4 w-4" />

@@ -1,14 +1,34 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useContext, useEffect } from "react";
+import { WorkflowContext } from "../../Context/WorkflowContext"
+import { UserContext } from "../../Context/UserContext";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { BarChart3, TrendingUp, TrendingDown } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+
+
 
 const Dashboard = () => {
   // Example stats (could be fetched from backend)
+
+  const { workflow, getUserProfile, getUserActivity, getWorkflow } = useContext(WorkflowContext);
+  const { userAuth, getAllUser } = useContext(UserContext);
+
+
+
+
+  useEffect(() => {
+    getUserProfile()
+    getUserActivity()
+    getWorkflow()
+    getAllUser()
+  }, [])
+
   const stats = {
-    totalUsers: 120,
-    totalWorkflows: 45,
-    activeWorkflows: 25,
-    failedWorkflows: 3,
+    totalUsers: userAuth?.users?.length,
+    totalWorkflows: workflow?.userprofile?.totalWorkflows,
+    activeWorkflows: workflow?.userprofile?.activeWorkflows,
+    // failedWorkflows: 3,
   };
 
   // Prepare data for bar chart
@@ -16,13 +36,13 @@ const Dashboard = () => {
     { name: "Users", value: stats.totalUsers },
     { name: "Workflows", value: stats.totalWorkflows },
     { name: "Active", value: stats.activeWorkflows },
-    { name: "Failed", value: stats.failedWorkflows },
+    // { name: "Failed", value: stats.failedWorkflows },
   ];
 
   // Prepare data for pie chart
   const pieData = [
     { name: "Active", value: stats.activeWorkflows },
-    { name: "Failed", value: stats.failedWorkflows },
+    // { name: "Failed", value: stats.failedWorkflows },
     { name: "Inactive", value: stats.totalWorkflows - (stats.activeWorkflows + stats.failedWorkflows) },
   ];
 
@@ -33,15 +53,7 @@ const Dashboard = () => {
       <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
 
       {/* Stat Cards */}
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        {Object.entries(stats).map(([key, value]) => (
-          <div key={key} className="bg-white p-6 rounded-lg shadow">
-            <p className="text-gray-500 capitalize">{key.replace(/([A-Z])/g, " $1")}</p>
-            <p className="text-2xl font-bold">{value}</p>
-            <p className="text-xs text-emerald-700">+9.4% MoM</p>
-          </div>
-        ))}
-      </div> */}
+
       <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-10">
         <Card className="lg:col-span-1" >
           <CardHeader>
@@ -55,34 +67,34 @@ const Dashboard = () => {
             <div>
               <p className="text-sm text-gray-800">Total Users</p>
               <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
-              <div className="flex items-center gap-1 text-sm">
+              {/* <div className="flex items-center gap-1 text-sm">
                 <TrendingUp className="h-3 w-3 text-green-500" />
                 <span className="text-green-500">+9.8% </span>
-              </div>
+              </div> */}
             </div>
             <div>
               <p className="text-sm text-gray-800">Active Workflows</p>
               <p className="text-2xl font-bold text-gray-900">{stats.activeWorkflows}</p>
-              <div className="flex items-center gap-1 text-sm">
+              {/* <div className="flex items-center gap-1 text-sm">
                 <TrendingUp className="h-3 w-3 text-green-500" />
                 <span className="text-green-500">+3.1% </span>
-              </div>
+              </div> */}
             </div>
             <div>
               <p className="text-sm text-gray-800">Total Workflows</p>
               <p className="text-2xl font-bold text-gray-900">{stats.totalWorkflows}</p>
-              <div className="flex items-center gap-1 text-sm">
+              {/* <div className="flex items-center gap-1 text-sm">
                 <TrendingUp className="h-3 w-3 text-green-500" />
                 <span className="text-green-500">+4.0% </span>
-              </div>
+              </div> */}
             </div>
             <div>
               <p className="text-sm text-gray-800">Failed Workflows</p>
               <p className="text-2xl font-bold text-gray-900">{stats.failedWorkflows}</p>
-              <div className="flex items-center gap-1 text-sm">
+              {/* <div className="flex items-center gap-1 text-sm">
                 <TrendingDown className="h-3 w-3 text-red-500" />
                 <span className="text-red-500">-0.8% </span>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>

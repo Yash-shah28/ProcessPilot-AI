@@ -17,6 +17,7 @@ export const UserContextProvider = ({ children }) => {
 		isLoading: false,
 		isCheckingAuth: true,
 		message: null,
+		users: null
 	})
 
 
@@ -108,11 +109,23 @@ export const UserContextProvider = ({ children }) => {
 		}
 	};
 
+	const getAllUser = async () => {
+		setUserAuth(prev => ({ ...prev, isLoading: true, error: null }));
+		try {
+			const response = await axios.get(`${API_URL}/`);
+			setUserAuth(prev => ({...prev, users: response.data.users,  isLoading: false }));
+		} catch (error) {
+			setUserAuth(prev => ({...prev, error: error.response.data.message || "Error fecting user", isLoading: false }));
+			throw error;
+		}
+	};
+
 	const getProfile = async () => {
 		setUserAuth(prev => ({ ...prev, isLoading: true, error: null }));
 		try {
 			const response = await axios.get(`${API_URL}/profile`);
 			setUserAuth(prev => ({...prev, user: response.data.profile,  isLoading: false }));
+			console.log(response.data.profile);
 		} catch (error) {
 			setUserAuth(prev => ({...prev, error: error.response.data.message || "Error fecting user", isLoading: false }));
 			throw error;
@@ -142,7 +155,7 @@ export const UserContextProvider = ({ children }) => {
 
 
 	return (
-		<UserContext.Provider value={{ userAuth, setUserAuth, signup, login, logout, verifyEmail, forgotPassword, resetPassword, checkAuth, googlelogin, getProfile, updateProfile }}>
+		<UserContext.Provider value={{ userAuth, setUserAuth, signup, login, logout, verifyEmail, forgotPassword,getAllUser, resetPassword, checkAuth, googlelogin, getProfile, updateProfile }}>
 			{children}
 		</UserContext.Provider>
 	)

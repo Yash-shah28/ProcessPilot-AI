@@ -6,7 +6,8 @@ import {
   signup,
   checkAuth,
   getProfile,
-  updateProfile
+  updateProfile,
+  getAllUsers
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import "../utils/passport.js";
@@ -20,6 +21,8 @@ router.get("/check-auth", verifyToken, checkAuth);
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
+router.get("/", verifyToken, getAllUsers);
+
 
 router.get("/profile", verifyToken, getProfile);
 router.put("/profile", verifyToken, updateProfile);
@@ -40,7 +43,7 @@ router.get(
             email: req.user.email,
           },
         });
-    generateTokenAndSetCookie(res, req.user._id);
+    generateTokenAndSetCookie(res, req.user._id,req.user.role);
     const redirectUrl = `${process.env.CLIENT_URL}/dashboard`;
     res.redirect(redirectUrl);
   }

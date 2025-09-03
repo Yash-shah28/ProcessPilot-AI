@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 
 
@@ -39,6 +40,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { UserContext } from "@/Context/UserContext";
 
 import axios from "axios";
+import Navbar from "@/components/Navbar";
 
 const API_URL = "http://localhost:5000/api"; // adjust to your backend
 

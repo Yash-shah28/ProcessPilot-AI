@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Plus } from "lucide-react";
+import {  Trash2, Plus } from "lucide-react";
+import { UserContext } from "@/Context/UserContext";
 
 const Users = () => {
-  const [users, setUsers] = useState([]);
+  const { userAuth, getAllUser } = useContext(UserContext);
 
   useEffect(() => {
-    // Replace with backend API call: /admin/users
-    setUsers([
-      { id: 1, name: "Yash Shah", email: "yash@example.com", role: "user", status: "active" },
-      { id: 2, name: "Kordia", email: "kordia@example.com", role: "admin", status: "active" },
-    ]);
+    getAllUser();
   }, []);
 
   return (
@@ -36,9 +33,9 @@ const Users = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((u) => (
+          {userAuth?.users?.map((u) => (
             <tr
-              key={u.id}
+              key={u._id}
               className="border-t hover:bg-gray-50 transition-colors"
             >
               <td className="p-3">{u.name}</td>
@@ -52,13 +49,10 @@ const Users = () => {
                       : "bg-red-100 text-red-600"
                   }`}
                 >
-                  {u.status}
+                  {u.status || "active"}
                 </span>
               </td>
               <td className="p-3 space-x-2">
-                <Button variant="outline" size="sm" className="hover:bg-blue-100">
-                  <Edit className="h-4 w-4" />
-                </Button>
                 <Button
                   variant="outline"
                   size="sm"

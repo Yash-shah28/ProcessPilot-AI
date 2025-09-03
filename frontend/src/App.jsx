@@ -4,7 +4,6 @@ import { Toaster } from "react-hot-toast";
 import { useContext, useEffect } from "react";
 import { UserContext } from "./Context/UserContext";
 
-
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
@@ -22,122 +21,152 @@ import Workflows from "./pages/admin/Workflows";
 import GoogleGroups from "./pages/admin/GoogleGroups";
 import AdminProfile from "./pages/admin/AdminProfile";
 
+// Protect user routes (only for normal users)
+const UserRoute = ({ children }) => {
+  const { userAuth } = useContext(UserContext);
 
+  if (!userAuth.isAuthenticated) {
+    return <Navigate to='/login' replace />;
+  }
 
+  if (userAuth.user?.role === "admin") {
+    return <Navigate to='/admin/dashboard' replace />;
+  }
 
-// protect routes that require authentication
-const ProtectedRoute = ({ children }) => {
-	const { userAuth } = useContext(UserContext);
-
-	if (!userAuth.isAuthenticated) {
-		return <Navigate to='/login' replace />;
-	}
-
-
-	return children;
+  return children;
 };
 
-// redirect authenticated users to the home page
+// Protect admin routes (only for admins)
+const AdminRoute = ({ children }) => {
+  const { userAuth } = useContext(UserContext);
+
+  if (!userAuth.isAuthenticated) {
+    return <Navigate to='/login' replace />;
+  }
+
+  if (userAuth.user?.role !== "admin") {
+    return <Navigate to='/' replace />;
+  }
+
+  return children;
+};
+
+// Redirect authenticated users to proper dashboards
 const RedirectAuthenticatedUser = ({ children }) => {
-	const { userAuth } = useContext(UserContext);
+  const { userAuth } = useContext(UserContext);
 
-	if (userAuth.isAuthenticated) {
-		return <Navigate to='/' replace />;
-	}
+  if (userAuth.isAuthenticated) {
+    if (userAuth.user?.role === "admin") {
+      return <Navigate to='/admin/dashboard' replace />;
+    }
+    return <Navigate to='/' replace />;
+  }
 
-	return children;
+  return children;
 };
 
 function App() {
-	const { userAuth, checkAuth } = useContext(UserContext);
+  const { userAuth, checkAuth } = useContext(UserContext);
 
-	useEffect(() => {
-		checkAuth();
-	}, []);
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
-	if (userAuth.isCheckingAuth) return <LoadingSpinner />;
+  if (userAuth.isCheckingAuth) return <LoadingSpinner />;
 
-	return (
-		<div>
-			<Routes>
-				<Route
-					path='/'
-					element={
-						<ProtectedRoute>
-							<Dashboard />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path='/signup'
-					element={
-						<RedirectAuthenticatedUser>
-							<SignUpPage />
-						</RedirectAuthenticatedUser>
-					}
-				/>
-				<Route
-					path='/login'
-					element={
-						<RedirectAuthenticatedUser>
-							<LoginPage />
-						</RedirectAuthenticatedUser>
-					}
-				/>
-				<Route
-					path='/aboutus'
-					element={
-						<ProtectedRoute>
-							<AboutUs />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path='/inputs'
-					element={
-						<ProtectedRoute>
-							<Inputs />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path='/guide'
-					element={
-						<ProtectedRoute>
-							<Guide />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path='/userprofile'
-					element={
-						<ProtectedRoute>
-							<UserProfile />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path='/analytics'
-					element={
-						<ProtectedRoute>
-							<Anyalytics />
-						</ProtectedRoute>
-					}
-				/>
-				<Route path="/admin" element={<AdminLayout />}>
-					<Route path="dashboard" element={<AdminDashboard />} />
-					<Route path="users" element={<Users />} />
-					<Route path="workflows" element={<Workflows />} />
-					<Route path="GoogleGroup" element={<GoogleGroups />} />
-					<Route path="AdminProfile" element={<AdminProfile />}/>
-				</Route>
+  return (
+    <div>
+      <Routes>
+        {/* Public Routes */}
+        <Route
+          path='/signup'
+          element={
+            <RedirectAuthenticatedUser>
+              <SignUpPage />
+            </RedirectAuthenticatedUser>
+          }
+        />
+        <Route
+          path='/login'
+          element={
+            <RedirectAuthenticatedUser>
+              <LoginPage />
+            </RedirectAuthenticatedUser>
+          }
+        />
 
-				{/* catch all routes */}
-				<Route path='*' element={<Navigate to='/' replace />} />
-			</Routes>
-			<Toaster />
-		</div>
-	);
+        {/* User Routes */}
+        <Route
+          path='/'
+          element={
+            <UserRoute>
+              <Dashboard />
+            </UserRoute>
+          }
+        />
+        <Route
+          path='/aboutus'
+          element={
+            <UserRoute>
+              <AboutUs />
+            </UserRoute>
+          }
+        />
+        <Route
+          path='/inputs'
+          element={
+            <UserRoute>
+              <Inputs />
+            </UserRoute>
+          }
+        />
+        <Route
+          path='/guide'
+          element={
+            <UserRoute>
+              <Guide />
+            </UserRoute>
+          }
+        />
+        <Route
+          path='/userprofile'
+          element={
+            <UserRoute>
+              <UserProfile />
+            </UserRoute>
+          }
+        />
+        <Route
+          path='/analytics'
+          element={
+            <UserRoute>
+              <Anyalytics />
+            </UserRoute>
+          }
+        />
+
+        {/* Admin Routes */}
+        <Route
+          path='/admin'
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route path='dashboard' element={<AdminDashboard />} />
+          <Route path='users' element={<Users />} />
+          <Route path='workflows' element={<Workflows />} />
+          <Route path='googlegroup' element={<GoogleGroups />} />
+          <Route path='adminprofile' element={<AdminProfile />} />
+        </Route>
+
+        {/* Catch all */}
+        <Route path='*' element={<Navigate to='/' replace />} />
+      </Routes>
+      <Toaster />
+    </div>
+  );
 }
 
 export default App;

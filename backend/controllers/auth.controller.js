@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
 		});
 
 		// jwt
-		generateTokenAndSetCookie(res, user._id);
+		generateTokenAndSetCookie(res, user._id, user.role);
 		res.status(201).json({
 			success: true,
 			message: "User created successfully",
@@ -64,7 +64,7 @@ export const login = async (req, res) => {
 			return res.status(400).json({ success: false, message: "Invalid credentials" });
 		}
 
-		generateTokenAndSetCookie(res, user._id);
+		generateTokenAndSetCookie(res, user._id, user.role);
 
 		user.lastLogin = new Date();
 		await user.save();
@@ -104,7 +104,7 @@ export const checkAuth = async (req, res) => {
 
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select("name email createdAt lastLogin");
+    const user = await User.findById(req.userId).select("name email createdAt lastLogin role");
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
@@ -139,7 +139,7 @@ export const updateProfile = async (req, res) => {
       req.userId,
       { $set: { ...(name && { name }), ...(email && { email }) } },
       { new: true, runValidators: true }
-    ).select("name email createdAt lastLogin");
+    ).select("name email createdAt lastLogin role");
 
     res.status(200).json({
       success: true,
@@ -149,5 +149,22 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     console.log("Error in updateProfile", error);
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    // Check role
+    if (req.userRole !== "admin") {
+      return res.status(403).json({ success: false, message: "Access denied. Admins only." });
+    }
+
+    // Fetch all users
+    const users = await User.find().select("-password"); // remove password field
+
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch users" });
   }
 };

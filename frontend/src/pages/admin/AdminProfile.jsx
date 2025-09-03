@@ -1,35 +1,60 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useContext, useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Edit, XCircleIcon } from "lucide-react";
+import { UserContext } from "@/Context/UserContext";
 
 export default function AdminProfile() {
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    name: "Rohang Shah",
-    email: "rohang.shah@company.com",
-    role: "Administrator",
-    avatarUrl: "",
-    memberSince: "15/1/2024",
-    lastLogin: "20/1/2024",
-  });
+  const [formData, setFormData] = useState({ name: "", email: "" });
 
-  const [formData, setFormData] = useState(profile);
+  const { userAuth, getProfile, updateProfile } = useContext(UserContext);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    // Fetch profile when component mounts
+    getProfile();
+  }, []);
+
+  useEffect(() => {
+    // Sync formData with userAuth.user once it's available
+    if (userAuth.user) {
+      setFormData({
+        name: userAuth.user.name || "",
+        email: userAuth.user.email || "",
+      });
+    }
+  }, [userAuth.user]);
+
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    setProfile(formData);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      await updateProfile(formData.email, formData.name); // update via context
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to update profile", error);
+    }
   };
+
+  if (!userAuth.user) {
+    return (
+      <div className="p-6 text-center text-gray-500">Loading profile...</div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
@@ -38,7 +63,9 @@ export default function AdminProfile() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="flex items-center gap-4">
             <User className="h-6 w-6 text-gray-600" />
-            <CardTitle className="text-lg font-semibold">Profile Information</CardTitle>
+            <CardTitle className="text-lg font-semibold">
+              Profile Information
+            </CardTitle>
           </div>
           <Button
             variant="outline"
@@ -62,11 +89,11 @@ export default function AdminProfile() {
 
         <CardContent className="flex items-center gap-6">
           <Avatar className="h-14 w-14">
-            {profile.avatarUrl ? (
-              <AvatarImage src={profile.avatarUrl} alt={profile.name} />
+            {userAuth.user.avatar ? (
+              <AvatarImage src={userAuth.user.avatar} alt={userAuth.user.name} />
             ) : (
               <AvatarFallback>
-                {profile.name
+                {userAuth.user.name
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
@@ -75,10 +102,17 @@ export default function AdminProfile() {
           </Avatar>
 
           <div>
-            <h3 className="text-lg font-semibold">{profile.name}</h3>
-            <p className="text-gray-600">{profile.email}</p>
+            <h3 className="text-lg font-semibold">{userAuth.user.name}</h3>
+            <p className="text-gray-600">{userAuth.user.email}</p>
             <p className="text-sm text-gray-500 mt-1">
-              Member since: {profile.memberSince} &nbsp; | &nbsp; Last login: {profile.lastLogin}
+              Member since:{" "}
+              {userAuth.user.createdAt
+                ? new Date(userAuth.user.createdAt).toLocaleDateString()
+                : "N/A"}{" "}
+              &nbsp; | &nbsp; Last login:{" "}
+              {userAuth.user.lastLogin
+                ? new Date(userAuth.user.lastLogin).toLocaleDateString()
+                : "N/A"}
             </p>
           </div>
         </CardContent>
@@ -96,34 +130,40 @@ export default function AdminProfile() {
             <Card>
               <CardHeader>
                 <CardTitle>Edit Profile</CardTitle>
-                <CardDescription>Update your profile information below</CardDescription>
+                <CardDescription>
+                  Update your profile information below
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" name="name" value={formData.name} onChange={handleChange} />
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
                 </div>
-
-                {/* <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Input id="role" name="role" value={formData.role} onChange={handleChange} />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="avatarUrl">Avatar URL</Label>
-                  <Input id="avatarUrl" name="avatarUrl" value={formData.avatarUrl} onChange={handleChange} />
-                </div> */}
 
                 <div className="flex justify-end gap-3">
                   <Button variant="outline" onClick={() => setIsEditing(false)}>
                     Cancel
                   </Button>
-                  <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={handleSave}>
+                  <Button
+                    className="bg-blue-600 text-white hover:bg-blue-700"
+                    onClick={handleSave}
+                  >
                     Save Changes
                   </Button>
                 </div>
