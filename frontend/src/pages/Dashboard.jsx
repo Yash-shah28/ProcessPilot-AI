@@ -3,8 +3,13 @@ import { useContext, useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import { Search } from 'lucide-react';
-import { Link,useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { WorkflowContext } from '../Context/WorkflowContext';
+import { Button } from '../components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { Textarea } from '../components/ui/textarea';
+import { Label } from '../components/ui/label';
+import { Eye, Edit, Trash } from 'lucide-react';
 const Dashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [viewMode, setViewMode] = useState('grid');
@@ -12,10 +17,43 @@ const Dashboard = () => {
     const [statusFilter, setStatusFilter] = useState('all');
     const { workflow, getWorkflow } = useContext(WorkflowContext)
 
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+    const [isViewOpen, setIsViewOpen] = useState(false)
+    const [editData, setEditData] = useState({ name: "", description: "" })
+    const [selectedWorkflow, setSelectedWorkflow] = useState(null);
 
+    const handleEdit = (workflow) => {
+        setSelectedWorkflow(workflow)
+        setEditData({ name: workflow.name, description: workflow.description })
+        setIsEditOpen(true)
+    }
+
+    const handleSaveEdit = () => {
+        workflow.setWorkflows((prev) =>
+            prev.map((wf) =>
+                wf.id === selectedWorkflow.id ? { ...wf, ...editData } : wf
+            )
+        )
+        setIsEditOpen(false)
+    }
+
+    const handleDelete = (workflow) => {
+        setSelectedWorkflow(workflow)
+        setIsDeleteOpen(true)
+    }
+
+    const confirmDelete = () => {
+        workflow.setWorkflows((prev) => prev.filter((wf) => wf.id !== selectedWorkflow.id))
+        setIsDeleteOpen(false)
+    }
+
+    const handleView = (workflow) => {
+        setSelectedWorkflow(workflow)
+        setIsViewOpen(true)
+    }
 
     const location = useLocation();
-
 
     useEffect(() => {
         if (location.pathname === '/') {
@@ -226,19 +264,25 @@ const Dashboard = () => {
                                 </div>
                                 <div className="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                                     <div className="flex justify-between">
-                                        <button className="text-indigo-600 hover:text-indigo-900 text-sm font-medium cursor-pointer whitespace-nowrap !rounded-button">
+                                        <Button
+                                            onClick={() => handleView(workflow)}
+                                            className="bg-white hover:bg-gray-200 text-gray-700 border">
                                             View Details
-                                        </button>
+                                        </Button>
                                         <div className="flex space-x-2">
-                                            <button className="text-gray-400 hover:text-gray-500 cursor-pointer whitespace-nowrap !rounded-button">
-                                                <i className="fas fa-edit"></i>
-                                            </button>
-                                            <button className="text-gray-400 hover:text-gray-500 cursor-pointer whitespace-nowrap !rounded-button">
+                                            <Button
+                                                onClick={() => handleEdit(workflow)}
+                                                className="bg-white hover:bg-gray-200 text-gray-700 border">
+                                                <Edit className="w-4 h-4" />
+                                            </Button>
+                                            {/* <button className="text-gray-400 hover:text-gray-500 cursor-pointer whitespace-nowrap !rounded-button">
                                                 <i className="fas fa-copy"></i>
-                                            </button>
-                                            <button className="text-gray-400 hover:text-red-500 cursor-pointer whitespace-nowrap !rounded-button">
-                                                <i className="fas fa-trash-alt"></i>
-                                            </button>
+                                            </button> */}
+                                            <Button
+                                                onClick={() => handleDelete(workflow)}
+                                                className="bg-white hover:bg-red-100 text-red-600 border">
+                                                <Trash className="w-4 h-4" />
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>
@@ -262,33 +306,113 @@ const Dashboard = () => {
                                                 </div>
                                             </div>
                                             <div className="flex items-center space-x-4">
-                                                <div className="flex flex-col items-end">
+                                                {/* <div className="flex flex-col items-end">
                                                     <div className="text-sm text-gray-500">Last Modified</div>
                                                     <div className="text-sm font-medium">{workflow.lastModified}</div>
-                                                </div>
+                                                </div> */}
                                                 {/* <StatusBadge status={workflow.status} /> */}
                                                 <div className="flex space-x-2">
-                                                    <button className="text-gray-400 hover:text-indigo-600 cursor-pointer whitespace-nowrap !rounded-button">
-                                                        <i className="fas fa-eye"></i>
-                                                    </button>
-                                                    <button className="text-gray-400 hover:text-gray-500 cursor-pointer whitespace-nowrap !rounded-button">
-                                                        <i className="fas fa-edit"></i>
-                                                    </button>
-                                                    <button className="text-gray-400 hover:text-gray-500 cursor-pointer whitespace-nowrap !rounded-button">
+                                                    <Button
+                                                        onClick={() => handleView(workflow)}
+                                                        className="bg-white hover:bg-gray-200 text-gray-700 border">
+                                                        <Eye className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleEdit(workflow)}
+                                                        className="bg-white hover:bg-gray-200 text-gray-700 border">
+                                                        <Edit className="w-4 h-4" />
+                                                    </Button>
+                                                    {/* <button className="text-gray-400 hover:text-gray-500 cursor-pointer whitespace-nowrap !rounded-button">
                                                         <i className="fas fa-copy"></i>
-                                                    </button>
-                                                    <button className="text-gray-400 hover:text-red-500 cursor-pointer whitespace-nowrap !rounded-button">
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </button>
+                                                    </button> */}
+                                                    <Button
+                                                        onClick={() => handleDelete(workflow)}
+                                                        className="bg-white hover:bg-red-100 text-red-600 border">
+                                                        <Trash className="w-4 h-4" />
+                                                    </Button>
                                                 </div>
                                             </div>
                                         </div>
+                                        {/* Footer row: Last Modified */}
+                                            <div className="mt-4 flex justify-between text-xs text-gray-500">
+                                                <span>Owner: {workflow.owner}</span>
+                                                <span>Last Modified: {workflow.lastModified}</span>
+                                            </div>
                                     </div>
                                 </li>
                             ))}
                         </ul>
                     </div>
                 )}
+                {/* ---- View Dialog ---- */}
+                <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Workflow Details</DialogTitle>
+                        </DialogHeader>
+                        {selectedWorkflow && (
+                            <div className="space-y-4">
+                                <div>
+                                    <h3 className="text-lg font-semibold">{selectedWorkflow.name}</h3>
+                                    <p className="text-gray-600">{selectedWorkflow.description}</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <h4 className="font-medium">Owner: {selectedWorkflow.owner || "Current User"}</h4>
+                                    <h4 className="font-medium">Steps: {selectedWorkflow.executionCount}</h4>
+                                    <h4 className="font-medium">Last Modified: {new Date(selectedWorkflow.createdAt).toLocaleDateString()}</h4>
+                                </div>
+                                <div className="flex justify-end">
+                                    <Button variant="outline"
+                                        className=" bg-gray-100 text-black hover:bg-red-600 hover:text-white"
+                                        onClick={() => setIsViewOpen(false)}>Close</Button>
+                                </div>
+                            </div>
+                        )}
+                    </DialogContent>
+                </Dialog>
+                {/* ---- Edit Dialog ---- */}
+                <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Edit Workflow Description</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <div className="space-y-4">
+                                <Label>Description</Label>
+                                <Textarea
+                                    value={editData.description}
+                                    onChange={(e) => setEditData(e.target.value)}
+                                    rows={4}
+                                    className="w-full border rounded-md p-2 mt-1"
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2">
+                                <Button variant="outline" className=" bg-gray-100 text-black hover:bg-red-600 hover:text-white"
+                                    onClick={() => setIsEditOpen(false)}>
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleSaveEdit} variant="outline" className=" bg-gray-100 text-black hover:bg-blue-600 hover:text-white ">Save</Button>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+                {/* ---- Delete Confirmation Dialog ---- */}
+                <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Confirm Delete</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <p>Are you sure you want to delete the workflow "{selectedWorkflow?.name}"? This action cannot be undone.</p>
+                            <div className="flex justify-end gap-2">
+                                <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
+                                    Cancel
+                                </Button>
+                                <Button variant="destructive" onClick={confirmDelete}>Delete</Button>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
                 {/* Pagination */}
                 <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-lg shadow mt-6">
                     <div className="flex-1 flex justify-between sm:hidden">
