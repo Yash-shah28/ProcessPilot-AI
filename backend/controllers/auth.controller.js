@@ -101,3 +101,53 @@ export const checkAuth = async (req, res) => {
 		res.status(400).json({ success: false, message: error.message });
 	}
 };
+
+export const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select("name email createdAt lastLogin");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      profile: user,
+    });
+  } catch (error) {
+    console.log("Error in getProfile", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    if (!name && !email) {
+      return res.status(400).json({ success: false, message: "Nothing to update" });
+    }
+
+    // Check if email is being updated and already exists
+    if (email) {
+      const existingUser = await User.findOne({ email, _id: { $ne: req.userId } });
+      if (existingUser) {
+        return res.status(400).json({ success: false, message: "Email already in use" });
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      { $set: { ...(name && { name }), ...(email && { email }) } },
+      { new: true, runValidators: true }
+    ).select("name email createdAt lastLogin");
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      profile: updatedUser,
+    });
+  } catch (error) {
+    console.log("Error in updateProfile", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

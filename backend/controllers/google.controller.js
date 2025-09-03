@@ -3,6 +3,76 @@ import { User } from "../models/user.model.js";
 import { getNextDateTime } from "../utils/getNextDateTime.js";
 import { convertToRRULE } from "../utils/convertToRRULE.js";
 
+import { oauth2Client } from "../config/google.js";
+
+// Step 1: Generate OAuth URL
+export const connectGmail = async (req, res) => {
+  try {
+    const scopes = [
+      "https://www.googleapis.com/auth/gmail.send",
+      "https://www.googleapis.com/auth/gmail.readonly",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+    ];
+
+    const url = oauth2Client.generateAuthUrl({
+      access_type: "offline", // ensures refresh_token is returned
+      prompt: "consent",      // always ask user
+      scope: scopes,
+    });
+
+    res.json({ url });
+  } catch (error) {
+    console.error("Error generating Gmail OAuth URL:", error);
+    res.status(500).json({ success: false, message: "Failed to connect Gmail" });
+  }
+};
+
+// Step 2: Callback from Google
+export const googleCallback = async (req, res) => {
+  try {
+    const { code } = req.query;
+    const { tokens } = await oauth2Client.getToken(code);
+
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    user = {
+      accessToken: tokens.access_token,
+      refreshToken: tokens.refresh_token,
+      expiryDate: tokens.expiry_date,
+    };
+    await user.save();
+
+    // Redirect to frontend after successful connection
+    res.redirect("http://localhost:5173/profile");
+  } catch (error) {
+    console.error("Error in Google OAuth callback:", error);
+    res.status(500).json({ success: false, message: "Google OAuth failed" });
+  }
+};
+
+// Step 3: Disconnect Gmail
+export const disconnectGmail = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { $unset: { accessToken: "", refreshToken: "" } }, // remove fields
+      { new: true, runValidators: false }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ success: true, message: "Gmail disconnected" });
+  } catch (err) {
+    console.error("Error disconnecting Gmail:", err);
+    res.status(500).json({ message: "Failed to disconnect Gmail" });
+  }
+};
+
+
 
 export const sendEmail = async (req, res) => {
   const user = await User.findById(req.userId);

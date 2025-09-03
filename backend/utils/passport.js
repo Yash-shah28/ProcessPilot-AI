@@ -13,7 +13,9 @@ passport.use(new GoogleStrategy(
       "profile",
       "email",
       "https://www.googleapis.com/auth/gmail.send",
-      "https://www.googleapis.com/auth/calendar.events"
+      "https://www.googleapis.com/auth/calendar.events",
+      "https://www.googleapis.com/auth/admin.directory.group",
+      "https://www.googleapis.com/auth/admin.directory.group.member"
     ],
     accessType: "offline",
     prompt: "consent"
@@ -27,7 +29,7 @@ passport.use(new GoogleStrategy(
           googleId: profile.id,
           accessToken,
           refreshToken,
-          tokenExpiry: new Date(Date.now() + 3600 * 1000) // estimate
+          tokenExpiry: new Date(Date.now() + 3600 * 1000), // estimate4
         },
         { upsert: true, new: true }
       );

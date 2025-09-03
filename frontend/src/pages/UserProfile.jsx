@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Footer from "@/components/Footer"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState, useEffect, useContext } from "react";
+import Footer from "@/components/Footer";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   User,
   Mail,
@@ -22,10 +22,10 @@ import {
   Plus,
   Trash2,
   Settings,
-} from "lucide-react"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Pie, PieChart, Cell } from "recharts"
-import { Badge } from "@/components/ui/badge"
+} from "lucide-react";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Pie, PieChart, Cell } from "recharts";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -33,62 +33,32 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { UserContext } from "@/Context/UserContext";
 
-interface UserProfile {
-  id: string
-  name: string
-  email: string
-  avatar?: string
-  createdAt: string
-  lastLogin: string
-}
+import axios from "axios";
 
-interface Integration {
-  id: string
-  name: string
-  type: "gmail" | "calendar" | "slack" | "group-communication"
-  connected: boolean
-  lastSync: string
-  status: "active" | "error" | "syncing"
-  groups?: Group[]
-}
-
-interface Group {
-  id: string
-  name: string
-  emails: string[]
-  createdAt: string
-}
+const API_URL = "http://localhost:5000/api"; // adjust to your backend
 
 export default function Profile() {
-  const [isEditing, setIsEditing] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
-  const [integrations, setIntegrations] = useState<Integration[]>([])
-  const [isGroupDialogOpen, setIsGroupDialogOpen] = useState(false)
-  const [newGroupName, setNewGroupName] = useState("")
-  const [newGroupEmails, setNewGroupEmails] = useState("")
-  const [showGroupManagement, setShowGroupManagement] = useState(false)
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [integrations, setIntegrations] = useState([]);
+  const [isGroupDialogOpen, setIsGroupDialogOpen] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupEmails, setNewGroupEmails] = useState("");
+  const [showGroupManagement, setShowGroupManagement] = useState(false);
+
+  const { userAuth, getProfile, updateProfile } = useContext(UserContext);
+
 
   // Mock data - replace with actual API calls to your backend
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Replace with actual API calls
-        // const userResponse = await fetch('/api/user/profile')
-        // const integrationsResponse = await fetch('/api/user/integrations')
 
-        // Mock data for demonstration
-        setUserProfile({
-          id: "user_123",
-          name: "Sarah Chen",
-          email: "sarah.chen@company.com",
-          avatar: "/placeholder.svg?height=80&width=80",
-          createdAt: "2024-01-15",
-          lastLogin: "2024-01-20T10:30:00Z",
-        })
+        getProfile();
 
         setIntegrations([
           {
@@ -137,57 +107,45 @@ export default function Profile() {
               },
             ],
           },
-        ])
+        ]);
 
-        setLoading(false)
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching user data:", error)
-        setLoading(false)
+        console.error("Error fetching user data:", error);
+        setLoading(false);
       }
-    }
+    };
 
-    fetchUserData()
-  }, [])
+    fetchUserData();
+  }, []);
 
   const handleSaveProfile = async () => {
     try {
-      // Replace with actual API call
-      // await fetch('/api/user/profile', {
-      //   method: 'PUT',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(userProfile)
-      // })
-      setIsEditing(false)
-    } catch (error) {
-      console.error("Error saving profile:", error)
+      await updateProfile(userAuth.user.email, userAuth.user.name); // call context update
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Error saving profile:", err);
     }
-  }
+  };
 
   const handleAddGroup = async () => {
-    if (!newGroupName.trim() || !newGroupEmails.trim()) return
+    if (!newGroupName.trim() || !newGroupEmails.trim()) return;
 
     const emailList = newGroupEmails
       .split(/[,\n]/)
       .map((email) => email.trim())
-      .filter((email) => email && email.includes("@"))
+      .filter((email) => email && email.includes("@"));
 
-    if (emailList.length === 0) return
+    if (emailList.length === 0) return;
 
-    const newGroup: Group = {
+    const newGroup = {
       id: `grp_${Date.now()}`,
       name: newGroupName.trim(),
       emails: emailList,
       createdAt: new Date().toISOString(),
-    }
+    };
 
     try {
-      // Replace with actual API call
-      // await fetch('/api/groups', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(newGroup)
-      // })
-
       setIntegrations((prev) =>
         prev.map((integration) =>
           integration.type === "group-communication"
@@ -195,23 +153,20 @@ export default function Profile() {
               ...integration,
               groups: [...(integration.groups || []), newGroup],
             }
-            : integration,
-        ),
-      )
+            : integration
+        )
+      );
 
-      setNewGroupName("")
-      setNewGroupEmails("")
-      setIsGroupDialogOpen(false)
+      setNewGroupName("");
+      setNewGroupEmails("");
+      setIsGroupDialogOpen(false);
     } catch (error) {
-      console.error("Error adding group:", error)
+      console.error("Error adding group:", error);
     }
-  }
+  };
 
-  const handleDeleteGroup = async (groupId: string) => {
+  const handleDeleteGroup = async (groupId) => {
     try {
-      // Replace with actual API call
-      // await fetch(`/api/groups/${groupId}`, { method: 'DELETE' })
-
       setIntegrations((prev) =>
         prev.map((integration) =>
           integration.type === "group-communication"
@@ -219,60 +174,91 @@ export default function Profile() {
               ...integration,
               groups: integration.groups?.filter((group) => group.id !== groupId) || [],
             }
-            : integration,
-        ),
-      )
+            : integration
+        )
+      );
     } catch (error) {
-      console.error("Error deleting group:", error)
+      console.error("Error deleting group:", error);
     }
-  }
+  };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
       case "active":
-        return "bg-green-500"
+        return "bg-green-500";
       case "error":
-        return "bg-red-500"
+        return "bg-red-500";
       case "syncing":
-        return "bg-yellow-500"
+        return "bg-yellow-500";
       default:
-        return "bg-gray-500"
+        return "bg-gray-500";
     }
-  }
+  };
 
-  const getIntegrationIcon = (type: string) => {
+  const getIntegrationIcon = (type) => {
     switch (type) {
       case "gmail":
-        return <Mail className="h-5 w-5" />
+        return <Mail className="h-5 w-5" />;
       case "calendar":
-        return <Calendar className="h-5 w-5" />
+        return <Calendar className="h-5 w-5" />;
       case "slack":
-        return <MessageSquare className="h-5 w-5" />
+        return <MessageSquare className="h-5 w-5" />;
       case "group-communication":
-        return <Mail className="h-5 w-5" />
+        return <Mail className="h-5 w-5" />;
       default:
-        return <Activity className="h-5 w-5" />
+        return <Activity className="h-5 w-5" />;
     }
-  }
+  };
 
-  // Data for charts - Updated to include Group Communication
   const connectedServicesData = [
     { name: "Gmail", value: 35, connected: true },
     { name: "Calendar", value: 25, connected: true },
     { name: "Slack", value: 20, connected: false },
     { name: "Group Communication", value: 20, connected: true },
-  ]
+  ];
 
   const performanceData = [
     { service: "Gmail", performance: 94 },
     { service: "Calendar", performance: 98 },
     { service: "Slack", performance: 0 },
     { service: "Group Communication", performance: 96 },
-  ]
+  ];
 
-  const pieColors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]
+  const pieColors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-  const groupCommunicationIntegration = integrations.find((int) => int.type === "group-communication")
+  const groupCommunicationIntegration = integrations.find((int) => int.type === "group-communication");
+
+  const handleConnectGmail = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/google/connect`, { withCredentials: true });
+      if (res.data.url) {
+        window.location.href = res.data.url; // redirect to Google OAuth
+      }
+    } catch (error) {
+      console.error("Error connecting Gmail:", error);
+      alert("Failed to connect Gmail");
+    }
+  };
+
+  const handleDisconnectGmail = async () => {
+    try {
+      await axios.post(`${API_URL}/google/disconnect`, {}, { withCredentials: true });
+
+      // Update UI state after disconnect
+      setIntegrations((prev) =>
+        prev.map((int) =>
+          int.type === "gmail" ? { ...int, connected: false, status: "error" } : int
+        )
+      );
+
+      alert("Gmail disconnected!");
+    } catch (error) {
+      console.error("Error disconnecting Gmail:", error);
+      alert("Failed to disconnect Gmail");
+    }
+  };
+
+
 
   if (loading) {
     return (
@@ -282,17 +268,17 @@ export default function Profile() {
           <p className="mt-4 text-gray-600">Loading profile...</p>
         </div>
       </div>
-    )
+    );
   }
 
-  if (!userProfile) {
+  if (!userAuth.user) {
     return (
       <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600">Unable to load profile data</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -332,9 +318,9 @@ export default function Profile() {
           <CardContent>
             <div className="flex items-start gap-6">
               <Avatar className="h-20 w-20">
-                <AvatarImage src={userProfile.avatar || "/placeholder.svg"} />
+                <AvatarImage src={userAuth.user.avatar || "/placeholder.svg"} />
                 <AvatarFallback className="text-lg">
-                  {userProfile.name
+                  {userAuth.user.name
                     .split(" ")
                     .map((n) => n[0])
                     .join("")}
@@ -347,16 +333,16 @@ export default function Profile() {
                       <Label htmlFor="name">Full Name</Label>
                       <Input
                         id="name"
-                        value={userProfile.name}
-                        onChange={(e) => setUserProfile({ ...userProfile, name: e.target.value })}
+                        value={userAuth.user.name}
+                        onChange={(e) => updateProfile(userAuth.user.email, e.target.value)}
                       />
                     </div>
                     <div>
                       <Label htmlFor="email">Email</Label>
                       <Input
                         id="email"
-                        value={userProfile.email}
-                        onChange={(e) => setUserProfile({ ...userProfile, email: e.target.value })}
+                        value={userAuth.user.email}
+                        onChange={(e) => updateProfile(e.target.value, userAuth.user.name)}
                       />
                     </div>
                     <div className="col-span-2 flex gap-2">
@@ -368,11 +354,11 @@ export default function Profile() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold">{userProfile.name}</h3>
-                    <p className="text-gray-600">{userProfile.email}</p>
+                    <h3 className="text-xl font-semibold">{userAuth.user.name}</h3>
+                    <p className="text-gray-600">{userAuth.user.email}</p>
                     <div className="flex gap-4 text-sm text-gray-500">
-                      <span>Member since: {new Date(userProfile.createdAt).toLocaleDateString()}</span>
-                      <span>Last login: {new Date(userProfile.lastLogin).toLocaleDateString()}</span>
+                      <span>Member since: {new Date(userAuth.user.createdAt).toLocaleDateString()}</span>
+                      <span>Last login: {new Date(userAuth.user.lastLogin).toLocaleDateString()}</span>
                     </div>
                   </div>
                 )}
@@ -516,14 +502,24 @@ export default function Profile() {
                         {/* Always show Connect / Disconnect */}
                         <Button
                           size="sm"
+                          onClick={() =>
+                            integration.type === "gmail"
+                              ? integration.status === "active"
+                                ? handleDisconnectGmail()
+                                : handleConnectGmail()
+                              : null
+                          }
                           className={`bg-white border text-gray-800 
-                             ${integration.status === "active"
+     ${integration.status === "active"
                               ? "hover:bg-red-500 hover:text-white"   // Disconnect hover
                               : "hover:bg-green-500 hover:text-white" // Connect hover
                             }`}
                         >
                           {integration.status === "active" ? "Disconnect" : "Connect"}
                         </Button>
+
+
+
 
 
                         {/* Show Manage Groups only when active + group-communication */}
@@ -661,7 +657,8 @@ export default function Profile() {
           </TabsContent>
         </Tabs>
       </div>
+
       <Footer />
     </div>
-  )
+  );
 }

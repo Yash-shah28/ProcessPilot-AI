@@ -1,4 +1,5 @@
 import { Workflow } from "../../models/workflow.model.js";
+import {Activity} from "../../models/activity.model.js";
 import { inngest } from "../client.js";
 import { emailDraft, workflowAI } from "../../utils/ai.js";
 import { createCalendarEvent, sendEmail } from "../../controllers/google.controller.js";
@@ -100,7 +101,6 @@ export const onWorkflowCreate = inngest.createFunction(
             const extracted = extractJSONFromMarkdown(rawContent);
             const parsed = JSON.parse(extracted);
             const response = normalizeAndHandleWorkflow(parsed)
-            console.log(response.workflow_name);
 
             const email = await emailDraft(workflow.description);
             const emailcontent = email.output?.[0]?.content;
@@ -160,6 +160,9 @@ export const onWorkflowCreate = inngest.createFunction(
                     );
                 });
             }
+            await step.run("Update-Activity", async () => {
+                await Activity.create({ userId: workflow.userId, workflowId: workflow._id, type: "created", status: "success" });
+            })
 
 
         } catch (err) {

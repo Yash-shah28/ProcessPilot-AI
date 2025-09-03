@@ -5,6 +5,8 @@ import {
   logout,
   signup,
   checkAuth,
+  getProfile,
+  updateProfile
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import "../utils/passport.js";
@@ -18,6 +20,9 @@ router.get("/check-auth", verifyToken, checkAuth);
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
+
+router.get("/profile", verifyToken, getProfile);
+router.put("/profile", verifyToken, updateProfile);
 
 router.get("/google", passport.authenticate("google"));
 

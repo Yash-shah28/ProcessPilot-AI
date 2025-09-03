@@ -36,15 +36,18 @@ const stepSchema = new mongoose.Schema({
 
 
 const workflowSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  name: { type: String },
-  description: { type: String, required: true },
-  steps: [stepSchema],
-  status: {
-    type: String,
-    enum: ["idle", "running", "completed", "failed"],
-    default: "idle"
-  }
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    name: { type: String },
+    description: { type: String, required: true },
+    steps: [stepSchema],
+    status: {
+        type: String,
+        enum: ["idle", "running", "completed", "failed"],
+        default: "idle"
+    },
+    executionCount: { type: Number, default: 1 },
+    successRate: { type: Number, default: 0 },
+    lastRun: { type: Date }
 }, { timestamps: true });
 
 
