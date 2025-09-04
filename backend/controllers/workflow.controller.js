@@ -46,7 +46,7 @@ export const getWorkflows = async (req, res) => {
 export const getWorkflowById = async (req, res) => {
   try {
     const { id } = req.params;
-    const workflow = await Workflow.findOne({ _id: id, userId: req.userId });
+    const workflow = await Workflow.findById(id).populate('userId', 'name');
 
     if (!workflow) {
       return res.status(404).json({ message: "Workflow not found." });
@@ -58,7 +58,70 @@ export const getWorkflowById = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 
+};
+
+export const updateWorkflow = async (req, res) => {
+  const { id } = req.params;
+  const { description } = req.body;
+
+  try {
+    const workflow = await Workflow.findById(id).populate('userId', 'name');
+    if (!workflow) {
+      return res.status(404).json({ success: false, message: "Workflow not found" });
+    }
+
+    if (workflow.userId._id.toString() !== req.userId) {
+      return res.status(403).json({ success: false, message: "Unauthorized" });
+    }
+
+    if (description) {
+      workflow.description = description;
+      workflow.updatedAt = Date.now();
+    }
+
+    const updatedWorkflow = await workflow.save();
+     await inngest.send({
+      name: "workflow/create",
+      data: {
+        workflowId: id,
+      },
+    });
+    return res.status(200).json({ success: true, data: updatedWorkflow, message: "Workflow updated successfully" });
+
+  } catch (error) {
+    console.error("Error updating workflow:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const deleteWorkflow = async (req, res) => {
+
+  const { id } = req.params;
+
+  try {
+    const workflow = await Workflow.findById(id);
+
+    if (!workflow) {
+      return res.status(404).json({ success: false, message: "Workflow not found" });
+    }
+
+    console.log(req.userRole)
+    if (workflow.userId.toString() !== req.userId && req.userRole !== 'admin') {
+  return res.status(403).json({ success: false, message: "Unauthorized" });
 }
+
+
+    await Workflow.findByIdAndDelete(id);
+
+    return res.status(200).json({ success: true, message: "Workflow deleted successfully" });
+
+  } catch (error) {
+    console.error("Error deleting workflow:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+
+};
+
 
 export const getUserProfile = async (req, res) => {
   try {
@@ -116,6 +179,46 @@ export const getUserActivity = async (req, res) => {
   }
 };
 
-export const updateWorkflow = async (req, res) => { }
+export const getAllWorkflows = async (req, res) => {
+  try {
+    const workflows = await Workflow.find().sort({ createdAt: -1 }).populate('userId', 'name');
+    res.status(200).json({ sucess: true, data: workflows });
+  } catch (error) {
+    console.error("Error fetching workflows:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
-export const deleteWorkflow = async (req, res) => { }
+export const getTotalProfile = async (req, res) => {
+  try {
+
+    const totalWorkflows = await Workflow.countDocuments();
+    const activeWorkflows = await Workflow.countDocuments({ status: "idle" });
+
+    const workflows = await Workflow.find();
+    const totalExecutions = workflows.reduce((sum, wf) => sum + wf.executionCount, 0);
+
+    // Calculate weighted success rate
+    const successLogs = await Activity.countDocuments({  status: "success" });
+    const totalLogs = await Activity.countDocuments();
+
+    let successRate = 0;
+    if (totalLogs > 0) {
+      successRate = (successLogs / totalWorkflows) * 100;
+    }
+
+    const data = {
+      totalWorkflows,
+      activeWorkflows,
+      totalExecutions,
+      successRate: successRate.toFixed(1),
+    }
+
+    res.json({
+      success: true,
+      data
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching profile", error: err.message });
+  }
+};

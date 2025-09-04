@@ -7,7 +7,8 @@ import {
   checkAuth,
   getProfile,
   updateProfile,
-  getAllUsers
+  getAllUsers,
+  deleteUser
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import "../utils/passport.js";
@@ -22,6 +23,7 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
 router.get("/", verifyToken, getAllUsers);
+router.delete("/:id", verifyToken, deleteUser);
 
 
 router.get("/profile", verifyToken, getProfile);

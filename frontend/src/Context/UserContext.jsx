@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 
 import axios from "axios";
 import { createContext, useState } from "react";
@@ -33,7 +34,6 @@ export const UserContextProvider = ({ children }) => {
 	};
 
 	const login = async (email, password) => {
-		console.log(email,password)
 		setUserAuth(prev => ({ ...prev, isLoading: true, error: null }));
 		try {
 			const response = await axios.post(`${API_URL}/login`, { email, password });
@@ -125,7 +125,6 @@ export const UserContextProvider = ({ children }) => {
 		try {
 			const response = await axios.get(`${API_URL}/profile`);
 			setUserAuth(prev => ({...prev, user: response.data.profile,  isLoading: false }));
-			console.log(response.data.profile);
 		} catch (error) {
 			setUserAuth(prev => ({...prev, error: error.response.data.message || "Error fecting user", isLoading: false }));
 			throw error;
@@ -153,9 +152,19 @@ export const UserContextProvider = ({ children }) => {
 		}
 	};
 
+	const deleteUser = async (id) => {
+		setUserAuth(prev => ({ ...prev, isLoading: true, error: null }));
+		try {
+			const response = await axios.delete(`${API_URL}/${id}`,);
+		} catch (error) {
+			setUserAuth(prev => ({...prev, error: error.response.data.message || "Error ", isLoading: false }));
+			throw error;
+		}
+	};
+
 
 	return (
-		<UserContext.Provider value={{ userAuth, setUserAuth, signup, login, logout, verifyEmail, forgotPassword,getAllUser, resetPassword, checkAuth, googlelogin, getProfile, updateProfile }}>
+		<UserContext.Provider value={{ userAuth, setUserAuth, signup, login, logout, verifyEmail, forgotPassword,getAllUser, resetPassword, checkAuth, googlelogin, getProfile, updateProfile, deleteUser }}>
 			{children}
 		</UserContext.Provider>
 	)

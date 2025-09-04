@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 const Workflows = () => {
 
-  const { workflow, getWorkflow } = useContext(WorkflowContext)
+  const { workflow, getAllWorkflow,deleteWorkflow,getWorkflowById } = useContext(WorkflowContext)
 
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -17,18 +17,28 @@ const handleDelete = (workflow) => {
         setIsDeleteOpen(true)
     }
 
-    const confirmDelete = () => {
-        workflow.setWorkflows((prev) => prev.filter((wf) => wf.id !== selectedWorkflow.id))
-        setIsDeleteOpen(false)
-    }
+     const confirmDelete = async () => {
+        try {
+            await deleteWorkflow(selectedWorkflow._id);
+            getAllWorkflow(); // refresh list
+            setIsDeleteOpen(false);
+        } catch (error) {
+            console.error("Error deleting workflow:", error);
+        }
+    };
 
-    const handleView = (workflow) => {
-        setSelectedWorkflow(workflow)
-        setIsViewOpen(true)
-    }
+       const handleView = async (workflow) => {
+        try {
+            const wf = await getWorkflowById(workflow._id);
+            setSelectedWorkflow(wf);
+            setIsViewOpen(true);
+        } catch (error) {
+            console.error("Error fetching workflow:", error);
+        }
+    };
 
   useEffect(() => {
-    getWorkflow()
+    getAllWorkflow()
   }, []);
 
   console.log(workflow.workflow)
@@ -97,9 +107,9 @@ const handleDelete = (workflow) => {
                 <p className="text-gray-600">{selectedWorkflow.description}</p>
               </div>
               <div className="space-y-2">
-                <h4 className="font-medium">Owner: {selectedWorkflow.owner || "Current User"}</h4>
+                <h4 className="font-medium">Owner: {selectedWorkflow.userId.name || "Current User"}</h4>
                 <h4 className="font-medium">Steps: {selectedWorkflow.executionCount}</h4>
-                <h4 className="font-medium">Last Modified: {new Date(selectedWorkflow.createdAt).toLocaleDateString()}</h4>
+                <h4 className="font-medium">Last Modified: {new Date(selectedWorkflow.updatedAt).toLocaleDateString()}</h4>
               </div>
               <div className="flex justify-end">
                 <Button variant="outline"

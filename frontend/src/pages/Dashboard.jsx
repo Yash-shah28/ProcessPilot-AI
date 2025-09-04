@@ -15,7 +15,7 @@ const Dashboard = () => {
     const [viewMode, setViewMode] = useState('grid');
     const [sortBy, setSortBy] = useState('lastModified');
     const [statusFilter, setStatusFilter] = useState('all');
-    const { workflow, getWorkflow } = useContext(WorkflowContext)
+    const { workflow, getWorkflow, updateworkflow, deleteWorkflow, getWorkflowById } = useContext(WorkflowContext)
 
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -29,29 +29,39 @@ const Dashboard = () => {
         setIsEditOpen(true)
     }
 
-    const handleSaveEdit = () => {
-        workflow.setWorkflows((prev) =>
-            prev.map((wf) =>
-                wf.id === selectedWorkflow.id ? { ...wf, ...editData } : wf
-            )
-        )
-        setIsEditOpen(false)
-    }
+    const handleSaveEdit = async () => {
+        try {
+            await updateworkflow(selectedWorkflow.id, { description: editData.description });
+            getWorkflow(); // refresh list
+            setIsEditOpen(false);
+        } catch (error) {
+            console.error("Error updating workflow:", error.message);
+        }
+    };
 
     const handleDelete = (workflow) => {
         setSelectedWorkflow(workflow)
         setIsDeleteOpen(true)
     }
 
-    const confirmDelete = () => {
-        workflow.setWorkflows((prev) => prev.filter((wf) => wf.id !== selectedWorkflow.id))
-        setIsDeleteOpen(false)
-    }
-
-    const handleView = (workflow) => {
-        setSelectedWorkflow(workflow)
-        setIsViewOpen(true)
-    }
+    const confirmDelete = async () => {
+        try {
+            await deleteWorkflow(selectedWorkflow.id);
+            getWorkflow(); // refresh list
+            setIsDeleteOpen(false);
+        } catch (error) {
+            console.error("Error deleting workflow:", error);
+        }
+    };
+    const handleView = async (workflow) => {
+        try {
+            const wf = await getWorkflowById(workflow.id);
+            setSelectedWorkflow(wf);
+            setIsViewOpen(true);
+        } catch (error) {
+            console.error("Error fetching workflow:", error);
+        }
+    };
 
     const location = useLocation();
 
@@ -86,7 +96,7 @@ const Dashboard = () => {
         status: wf.status || 'idle',
         lastModified: new Date(wf.updatedAt).toISOString().split('T')[0],
         steps: wf.steps?.length || 0,
-        owner: wf.userId.name, // You could replace this with actual name if available
+        owner: wf.userId.name,
         category: 'Automation' // Static, unless you have this field in DB
     })) || [];
     // Filter workflows based on search query and status filter
@@ -334,10 +344,10 @@ const Dashboard = () => {
                                             </div>
                                         </div>
                                         {/* Footer row: Last Modified */}
-                                            <div className="mt-4 flex justify-between text-xs text-gray-500">
-                                                <span>Owner: {workflow.owner}</span>
-                                                <span>Last Modified: {workflow.lastModified}</span>
-                                            </div>
+                                        <div className="mt-4 flex justify-between text-xs text-gray-500">
+                                            <span>Owner: {workflow.owner}</span>
+                                            <span>Last Modified: {workflow.lastModified}</span>
+                                        </div>
                                     </div>
                                 </li>
                             ))}
@@ -350,6 +360,7 @@ const Dashboard = () => {
                         <DialogHeader>
                             <DialogTitle>Workflow Details</DialogTitle>
                         </DialogHeader>
+                        {console.log(selectedWorkflow)}
                         {selectedWorkflow && (
                             <div className="space-y-4">
                                 <div>
@@ -359,7 +370,7 @@ const Dashboard = () => {
                                 <div className="space-y-2">
                                     <h4 className="font-medium">Owner: {selectedWorkflow.owner || "Current User"}</h4>
                                     <h4 className="font-medium">Steps: {selectedWorkflow.executionCount}</h4>
-                                    <h4 className="font-medium">Last Modified: {new Date(selectedWorkflow.createdAt).toLocaleDateString()}</h4>
+                                    <h4 className="font-medium">Last Modified: {new Date(selectedWorkflow.updatedAt).toLocaleDateString()}</h4>
                                 </div>
                                 <div className="flex justify-end">
                                     <Button variant="outline"
@@ -381,7 +392,7 @@ const Dashboard = () => {
                                 <Label>Description</Label>
                                 <Textarea
                                     value={editData.description}
-                                    onChange={(e) => setEditData(e.target.value)}
+                                    onChange={(e) => setEditData({ ...editData, description: e.target.value })}
                                     rows={4}
                                     className="w-full border rounded-md p-2 mt-1"
                                 />

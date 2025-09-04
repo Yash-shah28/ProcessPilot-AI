@@ -5,7 +5,7 @@ import { UserContext } from "@/Context/UserContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const Users = () => {
-  const { userAuth, getAllUser } = useContext(UserContext);
+  const { userAuth, getAllUser,deleteUser } = useContext(UserContext);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -14,10 +14,15 @@ const Users = () => {
     setIsDeleteOpen(true)
   }
 
-  const confirmDelete = (user) => {
-    user.setSelectedUser((prev) => prev.filter((user) => user.id !== selectedUser.id))
-    setIsDeleteOpen(false)
-  }
+const confirmDelete = async () => {
+        try {
+            await deleteUser(selectedUser._id);
+            getAllUser(); // refresh list
+            setIsDeleteOpen(false);
+        } catch (error) {
+            console.error("Error deleting User:", error);
+        }
+    };
 
   useEffect(() => {
     getAllUser();

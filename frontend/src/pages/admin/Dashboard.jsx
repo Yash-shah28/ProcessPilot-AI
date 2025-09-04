@@ -11,14 +11,14 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 const Dashboard = () => {
   // Example stats (could be fetched from backend)
 
-  const { workflow, getUserProfile, getUserActivity, getWorkflow } = useContext(WorkflowContext);
+  const { workflow, getTotalProfile, getUserActivity, getWorkflow } = useContext(WorkflowContext);
   const { userAuth, getAllUser } = useContext(UserContext);
 
 
 
 
   useEffect(() => {
-    getUserProfile()
+    getTotalProfile()
     getUserActivity()
     getWorkflow()
     getAllUser()
@@ -63,7 +63,7 @@ const Dashboard = () => {
             </CardTitle>
             <CardDescription>Key metrics for your organization</CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-4 gap-4">
+          <CardContent className="grid grid-cols-3 gap-5">
             <div>
               <p className="text-sm text-gray-800">Total Users</p>
               <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
@@ -88,14 +88,7 @@ const Dashboard = () => {
                 <span className="text-green-500">+4.0% </span>
               </div> */}
             </div>
-            <div>
-              <p className="text-sm text-gray-800">Failed Workflows</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.failedWorkflows}</p>
-              {/* <div className="flex items-center gap-1 text-sm">
-                <TrendingDown className="h-3 w-3 text-red-500" />
-                <span className="text-red-500">-0.8% </span>
-              </div> */}
-            </div>
+            
           </CardContent>
         </Card>
       </div>

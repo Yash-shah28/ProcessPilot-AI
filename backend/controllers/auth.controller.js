@@ -160,7 +160,7 @@ export const getAllUsers = async (req, res) => {
     }
 
     // Fetch all users
-    const users = await User.find().select("-password"); // remove password field
+    const users = await User.find({role: "user"}).select("-password"); // remove password field
 
     res.status(200).json({ success: true, users });
   } catch (error) {
@@ -168,3 +168,30 @@ export const getAllUsers = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to fetch users" });
   }
 };
+
+export const deleteUser = async (req, res) => {
+	  try {
+	const { id } = req.params;
+	// Check role
+	console.log(id)
+	if (req.userRole !== "admin") {
+	  return res.status(403).json({ success: false, message: "Access denied. Admins only." });
+	}
+
+	// Prevent admin from deleting themselves
+	if (req.userId === id) {
+	  return res.status(400).json({ success: false, message: "Admins cannot delete themselves." });
+	}
+
+	const user = await User.findById(id);
+	if (!user) {
+	  return res.status(404).json({ success: false, message: "User not found" });
+	}
+
+	await User.findByIdAndDelete(id);
+	res.status(200).json({ success: true, message: "User deleted successfully" });
+	  } catch (error) {
+	console.error("Error deleting user:", error);
+	res.status(500).json({ success: false, message: "Failed to delete user" });
+	  }
+}
